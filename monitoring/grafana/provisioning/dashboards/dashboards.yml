@@ -1,0 +1,14 @@
+# WHEN DASHBOARDS ARE LOADED EACH PANEL NEEDS REFRESH (TOO MUCH TROUBLE)
+# BETTER TO JUST LOAD DASHBOARDS BY HAND
+
+apiVersion: 1
+
+# tells grafana where to find the pre-created dashboards
+providers:
+  - name: 'default'
+    folder: 'AQFC-dashboards'
+    type: 'file'
+    disableDeletion: true
+    editable: true
+    options:
+      path: '/var/lib/grafana/dashboards'
