@@ -69,6 +69,11 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
+		<dependency>
+      	<groupId>org.springframework</groupId>
+      	<artifactId>spring-context-support</artifactId>
+      	<!-- <version>${version.springboot.context}</version> -->
+    </dependency>
 		<!--<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jdbc</artifactId>
@@ -116,6 +121,11 @@
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
+
+		<dependency>
+      	<groupId>org.springframework.boot</groupId>
+      	<artifactId>spring-boot-starter-aop</artifactId>
+    	</dependency>
 		<!--<dependency>
 			<groupId>io.micrometer</groupId>
 			<artifactId>micrometer-registry-graphite</artifactId>
@@ -184,6 +194,13 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<executions>
+                    <execution>
+                        <goals>
+                            <goal>build-info</goal>
+                        </goals>
+                    </execution>
+                </executions>
 				<configuration>
 					<excludes>
 						<exclude>

@@ -1,5 +1,6 @@
 HELP.md
 target/
+.mvn
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
@@ -34,3 +35,4 @@ build/
 
 # Project Specific #
 test.log
+logs

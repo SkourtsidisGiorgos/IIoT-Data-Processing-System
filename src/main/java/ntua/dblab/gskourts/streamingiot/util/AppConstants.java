@@ -1,7 +1,11 @@
 package ntua.dblab.gskourts.streamingiot.util;
 
+import java.time.format.DateTimeFormatter;
+
 public class AppConstants {
-   
+      public static final DateTimeFormatter timeDateZoneFormatter = DateTimeFormatter
+                  .ofPattern("yyyyMMdd HH:mm:ss.SSS Z");
+
       public static final String KAFKA_BROKERS = "localhost:9092";
       public static final Integer MESSAGE_COUNT = 1000;
       public static final String CLIENT_ID = "client1";
@@ -22,7 +26,9 @@ public class AppConstants {
       public static final Integer KAFKA_PRODUCER_BUFFER_SIZE = 64 * 1024;
       public static final Integer CONNECTION_TIMEOUT = 100000;
       public static final String CLIENT_ID_STRING = "SimpleConsumerDemoClient";
-      
+      public static final String UNKNOWN = "UNKNOWN";
+      public static final String DATETIME_FORMAT = "yyyyMMdd.HHmmss";
+
       private AppConstants() {
       }
 }
