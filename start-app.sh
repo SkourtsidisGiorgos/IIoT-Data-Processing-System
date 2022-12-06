@@ -19,14 +19,14 @@ export JAVA_HOME="~/torun/java/openjdk/jdk-11.0.16.1/bin/java"
 export PATH=$JAVA_HOME/bin:$PATH
 
 echo "Checking java version"
-java_version=$(java --version | grep "openjdk 11.")
+java_version=$(java --version | grep "openjdk version")
 echo "Java version=${java_version}"
-if [ -z "$java_version" ]
-	then
-		echo "You have not given me the correct java version."
-		echo "Use java 11"
-		exit 0
-fi
+#if [ -z "$java_version" ]
+#	then
+#		echo "You have not given me the correct java version."
+#		echo "Use java 11"
+#		exit 0
+#fi
 
 jmx_port=10095
 

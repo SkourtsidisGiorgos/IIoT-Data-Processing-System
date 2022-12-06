@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -19,46 +20,50 @@ import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
 
-
-
 @RequiredArgsConstructor
 @Service
 @Qualifier("fakerDataProducer")
 public class FakerProducerService implements DataProducerI {
-   private final Logger log = LoggerFactory.getLogger(FakerProducerService.class);
-
+   private final Logger LOG = LoggerFactory.getLogger(FakerProducerService.class);
    @Autowired
    @Qualifier("measurementTypeMap")
    private Map<Integer, String> measurementTypeMap;
    private final KafkaTemplate<Integer, Integer> kafkaTemplate;
-   //private final Logger logger = LogManager.getLogger(FakerProducer.class);
+   @Value("${application.producer.produceIntervalSec}")
+   private int produceIntervalSec;
+   @Value("${application.producer.fakeProducer.enabled}")
+   private boolean enabled;
 
    Faker faker;
 
    @Override
    @EventListener(ApplicationStartedEvent.class)
    public void generate() {
+      if (!enabled) {
+         LOG.trace("enabled={}", enabled);
+         LOG.info("FakerProducerService is disabled");
+         return;
+      }
       faker = new Faker();
       Flux.interval(Duration.ofSeconds(1))
-         .map(i -> {
-            Integer measurementTypeInt = faker.random().nextInt(3);
-            return new Pair<>(measurementTypeInt, getValueByType(measurementTypeInt));
-         })
-         .subscribe(pair -> {
-            kafkaTemplate.send(AppConstants.TOPIC_MEASUREMENTS, pair.getValue0(), pair.getValue1());
-            log.info("Sent: <{},{}>", pair.getValue0(), pair.getValue1());
-         });
+            .map(i -> {
+               Integer measurementTypeInt = faker.random().nextInt(3);
+               return new Pair<>(measurementTypeInt, getValueByType(measurementTypeInt));
+            })
+            .subscribe(pair -> {
+               kafkaTemplate.send(AppConstants.TOPIC_MEASUREMENTS, pair.getValue0(), pair.getValue1());
+               LOG.info("Sent: <{},{}>", pair.getValue0(), pair.getValue1());
+            });
    }
 
-   private Integer getValueByType(int type){
-      if(type == 0){
+   private Integer getValueByType(int type) {
+      if (type == 0) {
          return Integer.parseInt(faker.weather().temperatureCelsius().replace("°C", ""));
-      }else if(type == 1){
-         return faker.random().nextInt(0,100);
-      }else if(type == 2){
+      } else if (type == 1) {
+         return faker.random().nextInt(0, 100);
+      } else if (type == 2) {
          return faker.random().nextInt(1000, 1100);
-      }
-      else{
+      } else {
          throw new IllegalArgumentException("Measurement type not supported");
       }
    }

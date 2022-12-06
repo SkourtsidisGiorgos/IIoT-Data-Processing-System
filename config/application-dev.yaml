@@ -1,0 +1,75 @@
+#spring.main.banner-mode: off
+debug: false
+
+logging.level._org.springframework.web.servlet.HandlerMapping.Mappings:  debug
+
+server:
+   port: 10000
+   shutdown: graceful
+   servlet.context-path: /streaming-iot
+ 
+management:
+   endpoints:
+      web.base-path: /manage
+      web.exposure.include: "*"
+      web.exposure.exclude: heapdump
+
+spring:
+   banner.location: classpath:banner.txt
+   # Kafka
+   kafka:
+      properties:
+         sasl.mechanism: PLAIN
+         bootstrap.servers: 127.0.0.1:9092
+         sasl.jaas.config: org.apache.kafka.common.security.plain.plain
+         security.protocol: PLAINTEXT
+         #bootstrap.servers: pkc-03vj5.europe-west8.gcp.confluent.cloud:9092
+         #sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule   required username: '752B2VK3WEHE47P5'   password: 'VxO0/2tkxDt2X5cQjloTskpDaZkLijv8Db4CKt7baEQQ1cHqIrWU2WApmpdbnfNb';
+         #security.protocol: SASL_SSL
+      producer:
+         key-serializer: org.apache.kafka.common.serialization.IntegerSerializer
+         value-serializer: org.apache.kafka.common.serialization.IntegerSerializer
+         client-id: spring-boot-producer
+         acks: 1 # Number of acknowledgments the producer requires the leader to have received before considering a request complete.
+         retries: 3 # enables retrying of failed sends.
+         batch-size: 16384 # send batch when full or linger.ms has passed
+         buffer-memory: 33554432 # Total memory size the producer can use to buffer records waiting to be sent to the server.
+         properties:
+            linger:
+               ms: 1000 # wait before sending batch
+      consumer:
+         key-deserializer: org.apache.kafka.common.serialization.IntegerDeserializer
+         value-deserializer: org.apache.kafka.common.serialization.IntegerDeserializer
+         fetch-max-wait: 1000 # Maximum amount of time the server blocks before answering the fetch request if there isn't sufficient data to immediately satisfy the requirement given by "fetch-min-size".
+         max-poll-records: 1000 # Maximum number of records returned in a single call to poll().
+         auto-offset-reset: earliest # What to do when there is no initial offset in Kafka or if the current offset no longer exists on the server.
+         enable-auto-commit: false # Whether the consumer's offset is periodically committed in the background.
+         group-id: group1
+      streams:
+         replication-factor: 1
+         application-id: spring-boot-streams
+      retry:
+         topic.max-delay: 15 # Maximum wait between retries. If less than the delay then the default of 30 seconds is applied.
+
+application:
+   modbusPal:
+      host: localhost
+      port: 10333
+   producer:
+      produceIntervalSec: 1
+      fakeProducer:
+         enabled: true
+      plc4xProducer:
+         enabled: false
+   consumer:
+      aggregator:
+         aggregateWindowSizeSec: 10
+         gracePeriodSec: 4
+
+
+
+
+
+
+
+

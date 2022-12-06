@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
@@ -19,60 +20,67 @@ import java.time.Duration;
 
 @Component
 public class TestConsumer {
-   private final Logger log = LoggerFactory.getLogger(Processor.class);
+      private final Logger log = LoggerFactory.getLogger(Processor.class);
 
-   @KafkaListener(topics = { AppConstants.TOPIC_MEASUREMENTS }, groupId = AppConstants.CONSUMER_AGGREGATOR)
-   public void consume(@NotNull ConsumerRecord<String, Long> record) {
-      log.info("received={} with key={}", record.value(), record.key());
-   }
+      @KafkaListener(topics = { AppConstants.TOPIC_MEASUREMENTS }, groupId = AppConstants.CONSUMER_AGGREGATOR)
+      public void consume(@NotNull ConsumerRecord<String, Long> record) {
+            log.info("received={} with key={}", record.value(), record.key());
+      }
 }
 
 @Component
 class Processor {
-   private final Logger LOG = LoggerFactory.getLogger(Processor.class);
+      private final Logger LOG = LoggerFactory.getLogger(Processor.class);
 
-   @Autowired
-   public void process(StreamsBuilder builder) {
+      @Value("${application.consumer.aggregator.aggregateWindowSizeSec}")
+      private int aggregateWindowSizeSec;
 
-      // Serializers/deserializers (serde)
-      final Serde<Integer> integerSerde = Serdes.Integer();
-      final Serde<String> stringSerde = Serdes.String();
-      final Serde<Long> longSerde = Serdes.Long();
+      @Value("${application.consumer.aggregator.gracePeriodSec}")
+      private int gracePeriodSec;
 
-      // Construct a `KStream` from the input topic
-      KStream<Integer, Integer> stream = builder
-            .stream(AppConstants.TOPIC_MEASUREMENTS, Consumed.with(integerSerde, integerSerde))
-            .peek((key, value) -> LOG.info("Received measurement={}", value));
+      @Autowired
+      public void process(StreamsBuilder builder) {
 
-      // Create a window
-      Duration windowSize = Duration.ofSeconds(10);
-      Duration graceSize = Duration.ofSeconds(3);
-      TimeWindows tumblingWindow = TimeWindows.ofSizeAndGrace(windowSize, graceSize);
+            // Serializers/deserializers (serde)
+            final Serde<Integer> integerSerde = Serdes.Integer();
+            final Serde<String> stringSerde = Serdes.String();
+            final Serde<Long> longSerde = Serdes.Long();
 
-      // Perform Aggregation
-      final KTable<Windowed<Integer>, Integer> aggregated = stream.groupByKey()
-            .windowedBy(tumblingWindow)
-            .aggregate(() -> 0,
-                  (key, value, total) -> total + value,
-                  Materialized.with((Serdes.Integer()), Serdes.Integer()))
-            .suppress(Suppressed.untilWindowCloses(Suppressed.BufferConfig.unbounded().shutDownWhenFull()));
-      //         .suppress(Suppressed.untilWindowCloses(Suppressed.BufferConfig.unbounded()));
+            // Construct a `KStream` from the input topic
+            KStream<Integer, Integer> stream = builder
+                        .stream(AppConstants.TOPIC_MEASUREMENTS, Consumed.with(integerSerde, integerSerde))
+                        .peek((key, value) -> LOG.info("Received measurement={}", value));
 
-      aggregated.toStream()
-            .map((wk, value) -> KeyValue.pair(wk.key(), value))
-            .peek((key, value) -> LOG.info("AGGREGATED: key={}, value={}", key, value))
-            .to(AppConstants.TOPIC_AGGREGATED_MEASUREMENTS, Produced.with(Serdes.Integer(), Serdes.Integer()));
+            // Create a window
+            Duration windowSize = Duration.ofSeconds(aggregateWindowSizeSec);
+            Duration graceSize = Duration.ofSeconds(gracePeriodSec);
+            TimeWindows tumblingWindow = TimeWindows.ofSizeAndGrace(windowSize, graceSize);
 
-      LOG.info("Aggregate the values of the same key every 10 seconds");
-      //      KTable<Integer, Long> wordCounts = stream
-      //                              .groupBy((key, value) -> value, Grouped.with(integerSerde, integerSerde))
-      //                              .windowedBy(SessionWindows.with(Duration.ofSeconds(10L)).grace(Duration.ofSeconds(10L)))
-      //                              .count(Materialized.as("measurements_30_seconds"));
+            // Perform Aggregation
+            final KTable<Windowed<Integer>, Integer> aggregated = stream.groupByKey()
+                        .windowedBy(tumblingWindow)
+                        .aggregate(() -> 0,
+                                    (key, value, total) -> total + value,
+                                    Materialized.with((Serdes.Integer()), Serdes.Integer()))
+                        .suppress(Suppressed.untilWindowCloses(Suppressed.BufferConfig.unbounded().shutDownWhenFull()));
+            //         .suppress(Suppressed.untilWindowCloses(Suppressed.BufferConfig.unbounded()));
 
-      //   .groupBy((key, value) -> value, Grouped.with(stringSerde, stringSerde))
-      //   .count(Materialized.as("counts"));
+            aggregated.toStream()
+                        .map((wk, value) -> KeyValue.pair(wk.key(), value))
+                        .peek((key, value) -> LOG.info("AGGREGATED: key={}, value={}", key, value))
+                        .to(AppConstants.TOPIC_AGGREGATED_MEASUREMENTS,
+                                    Produced.with(Serdes.Integer(), Serdes.Integer()));
 
-      // Convert the `KTable<String, Long>` into a `KStream<String, Long>` and write to the output topic.
-      //wordCounts.toStream().to("streams-wordcount-output", Produced.with(stringSerde, longSerde));
-   }
+            LOG.info("Aggregate the values of the same key every 10 seconds");
+            //      KTable<Integer, Long> wordCounts = stream
+            //                              .groupBy((key, value) -> value, Grouped.with(integerSerde, integerSerde))
+            //                              .windowedBy(SessionWindows.with(Duration.ofSeconds(10L)).grace(Duration.ofSeconds(10L)))
+            //                              .count(Materialized.as("measurements_30_seconds"));
+
+            //   .groupBy((key, value) -> value, Grouped.with(stringSerde, stringSerde))
+            //   .count(Materialized.as("counts"));
+
+            // Convert the `KTable<String, Long>` into a `KStream<String, Long>` and write to the output topic.
+            //wordCounts.toStream().to("streams-wordcount-output", Produced.with(stringSerde, longSerde));
+      }
 }

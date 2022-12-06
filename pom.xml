@@ -14,7 +14,7 @@
 	<name>streaming-iot</name>
 	<description>NTUA Student Giorgos Skourtsidis&apos;s Thesis</description>
 	<properties>
-		<java.version>11</java.version>
+		<java.version>17</java.version>
    	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<spring-boot-admin.version>2.7.4</spring-boot-admin.version>
@@ -31,6 +31,20 @@
     	<version.plugin.jacoco>0.8.8</version.plugin.jacoco>
 	</properties>
 	<dependencies>
+
+		<dependency>
+			<groupId>org.apache.plc4x</groupId>
+			<artifactId>plc4j-driver-modbus</artifactId>
+			<version>0.10.0</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.apache.plc4x</groupId>
+			<artifactId>plc4j-api</artifactId>
+			<version>0.10.0</version>
+		</dependency>
+
 
 		<dependency>
 			<groupId>org.javatuples</groupId>
