@@ -44,7 +44,7 @@ public class Plc4xProducer implements DataProducerI {
    private int modbusPalPort;
 
    @Override
-   //@EventListener(ApplicationStartedEvent.class)
+   @EventListener(ApplicationStartedEvent.class)
    public void generate() {
       if (!enabled) {
          LOG.info("Plc4xProducer is disabled");

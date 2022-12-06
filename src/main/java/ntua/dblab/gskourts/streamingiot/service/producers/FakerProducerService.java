@@ -3,9 +3,6 @@ package ntua.dblab.gskourts.streamingiot.service.producers;
 import java.time.Duration;
 import java.util.Map;
 
-import net.datafaker.Faker;
-import ntua.dblab.gskourts.streamingiot.util.AppConstants;
-
 import org.javatuples.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +15,8 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
+import net.datafaker.Faker;
+import ntua.dblab.gskourts.streamingiot.util.AppConstants;
 import reactor.core.publisher.Flux;
 
 @RequiredArgsConstructor
