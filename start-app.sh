@@ -19,7 +19,7 @@ export JAVA_HOME="~/torun/java/openjdk/jdk-11.0.16.1/bin/java"
 export PATH=$JAVA_HOME/bin:$PATH
 
 echo "Checking java version"
-java_version=$(java --version | grep "openjdk version")
+java_version=$(java --version | grep "openjdk")
 echo "Java version=${java_version}"
 #if [ -z "$java_version" ]
 #	then

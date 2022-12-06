@@ -41,9 +41,11 @@ spring:
          key-deserializer: org.apache.kafka.common.serialization.IntegerDeserializer
          value-deserializer: org.apache.kafka.common.serialization.IntegerDeserializer
          fetch-max-wait: 1000 # Maximum amount of time the server blocks before answering the fetch request if there isn't sufficient data to immediately satisfy the requirement given by "fetch-min-size".
+         fetch-min-size: 1 # Minimum amount of data the server should return for a fetch request.
          max-poll-records: 1000 # Maximum number of records returned in a single call to poll().
          auto-offset-reset: earliest # What to do when there is no initial offset in Kafka or if the current offset no longer exists on the server.
          enable-auto-commit: false # Whether the consumer's offset is periodically committed in the background.
+         auto-commit-interval: 15 # Frequency with which the consumer offsets are auto-committed to Kafka if 'enable.auto.commit' is set to true.
          group-id: group1
       streams:
          replication-factor: 1
@@ -61,6 +63,11 @@ application:
          enabled: true
       plc4xProducer:
          enabled: false
+   consumer:
+      aggregator:
+         aggregateWindowSizeSec: 10
+         gracePeriodSec: 4
+
 
 
 
