@@ -27,26 +27,14 @@ import ntua.dblab.gskourts.streamingiot.util.AppConf;
 import ntua.dblab.gskourts.streamingiot.util.AppConstants;
 
 @Component
-public class TestConsumer {
-      private final Logger log = LoggerFactory.getLogger(Processor.class);
-      private final String inputTopic;
-
-      @Autowired
-      public TestConsumer(AppConf appConf) {
-            this.inputTopic = appConf.getTemperatureInputTopic();
-      }
-
-      @KafkaListener(topics = AppConstants.TOPIC_TEMPERATURE_INPUT, groupId = AppConstants.CONSUMER_TEMPERATURE_AGGREGATOR)
-      public void consume(@NotNull ConsumerRecord<String, Long> record) {
-            log.info("received={} with key={}", record.value(), record.key());
-      }
-}
-
-@Component
-class Processor {
+public class Processor {
       private final Logger LOG = LoggerFactory.getLogger(Processor.class);
-      private final String inputTopic;
-      private final String outputTopic;
+      private final String tempInputTopic;
+      private final String tempOutputTopic;
+      private final String pressureInputTopic;
+      private final String pressureOutputTopic;
+      private final String powerInputTopic;
+      private final String powerOutputTopic;
       @Value("${application.consumer.aggregator.aggregateWindowSizeSec}")
       private int aggregateWindowSizeSec;
 
@@ -54,8 +42,13 @@ class Processor {
       private int gracePeriodSec;
 
       Processor(AppConf appConf) {
-            this.inputTopic = appConf.getTemperatureInputTopic();
-            this.outputTopic = appConf.getTemperatureOutputTopic();
+            this.tempInputTopic = appConf.getTemperatureInputTopic();
+            this.tempOutputTopic = appConf.getTemperatureOutputTopic();
+            this.pressureInputTopic = appConf.getPressureInputTopic();
+            this.pressureOutputTopic = appConf.getPressureOutputTopic();
+            this.powerInputTopic = appConf.getPowerInputTopic();
+            this.powerOutputTopic = appConf.getPowerOutputTopic();
+
       }
 
       @Autowired
@@ -68,8 +61,8 @@ class Processor {
 
             // Construct a `KStream` from the input topic
             KStream<Integer, Integer> stream = builder
-                        .stream(inputTopic, Consumed.with(integerSerde, integerSerde))
-                        .peek((key, value) -> LOG.info("Received measurement={}", value));
+                        .stream(tempInputTopic, Consumed.with(integerSerde, integerSerde))
+                        .peek((key, value) -> LOG.info("Received measurement={}, key={}", value, key));
 
             // Create a window
             Duration windowSize = Duration.ofSeconds(aggregateWindowSizeSec);
@@ -85,8 +78,23 @@ class Processor {
             //         .suppress(Suppressed.untilWindowCloses(Suppressed.BufferConfig.unbounded()));
 
             aggregated.toStream()
+                        .peek((key, value) -> LOG.trace("Aggregated measurement={}, key={}", value, key))
                         .map((wk, value) -> KeyValue.pair(wk.key(), value))
-                        .peek((key, value) -> LOG.info("AGGREGATED: key={}, value={}", key, value))
-                        .to(outputTopic, Produced.with(Serdes.Integer(), Serdes.Integer()));
+                        .peek((key, value) -> LOG.trace("AGGREGATED: key={}, value={}", key, value))
+                        .to(tempOutputTopic, Produced.with(Serdes.Integer(), Serdes.Integer()));
       }
 }
+
+//@Component
+//public class TestConsumer {
+//      private final Logger log = LoggerFactory.getLogger(Processor.class);
+
+//      @Autowired
+//      public TestConsumer(AppConf appConf) {
+//      }
+
+//      @KafkaListener(topics = AppConstants.TOPIC_TEMPERATURE_INPUT, groupId = AppConstants.CONSUMER_TEMPERATURE_AGGREGATOR)
+//      public void consume(@NotNull ConsumerRecord<String, Long> record) {
+//            log.info("received={} with key={}", record.value(), record.key());
+//      }
+//}
