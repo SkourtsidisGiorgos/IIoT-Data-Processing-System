@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Measurement {
-      private String id;
       private String value;
       private int measurementType;
+      // TODO: add timestamp
 }

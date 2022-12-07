@@ -4,33 +4,74 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.kafka.clients.admin.NewTopic;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.stereotype.Component;
 
+import ntua.dblab.gskourts.streamingiot.util.AppConf;
 import ntua.dblab.gskourts.streamingiot.util.AppConstants;
 
 @Component
 public class AppBeans {
 
-   @Bean
-   NewTopic measurementsInputTopic() {
-      return TopicBuilder.name(AppConstants.TOPIC_MEASUREMENTS).partitions(3).replicas(1).build();
+   private final AppConf appConf;
+
+   //@Autowired
+   public AppBeans(AppConf appConf) {
+      this.appConf = appConf;
    }
 
    @Bean
-   NewTopic measurementsAggregatedTopic() {
-      return TopicBuilder.name(AppConstants.TOPIC_AGGREGATED_MEASUREMENTS).partitions(3).replicas(1).build();
+   NewTopic temperatureInputTopic() {
+      return TopicBuilder.name(appConf.getTemperatureInputTopic()).partitions(appConf.getTemperatureDevicesNum())
+            .replicas(appConf.getTemperatureReplicas())
+            .build();
    }
 
    @Bean
-   @Qualifier("measurementTypeMap")
-   Map measurementTypeMap() {
-      Map<Integer, String> measurementType = new HashMap<>();
-      measurementType.put(0, "temperature");
-      measurementType.put(1, "humidity");
-      measurementType.put(2, "pressure");
-      return measurementType;
+   NewTopic temperatureOutputTopic() {
+      return TopicBuilder.name(appConf.getTemperatureOutputTopic()).partitions(appConf.getTemperatureDevicesNum())
+            .replicas(appConf.getTemperatureReplicas())
+            .build();
+   }
+
+   @Bean
+   NewTopic pressureInputTopic() {
+      return TopicBuilder.name(appConf.getPressureInputTopic()).partitions(appConf.getPressureDevicesNum())
+            .replicas(appConf.getPressureReplicas())
+            .build();
+   }
+
+   @Bean
+   NewTopic pressureOutputTopic() {
+      return TopicBuilder.name(appConf.getPressureOutputTopic()).partitions(appConf.getPressureDevicesNum())
+            .replicas(appConf.getPressureReplicas())
+            .build();
+   }
+
+   @Bean
+   NewTopic powerInputTopic() {
+      return TopicBuilder.name(appConf.getPowerInputTopic()).partitions(appConf.getPowerDevicesNum())
+            .replicas(appConf.getPowerReplicas())
+            .build();
+   }
+
+   @Bean
+   NewTopic powerOutputTopic() {
+      return TopicBuilder.name(appConf.getPowerOutputTopic()).partitions(appConf.getPowerDevicesNum())
+            .replicas(appConf.getPowerReplicas())
+            .build();
+   }
+
+   @Bean
+   @Qualifier("topicTypeMap")
+   Map<Integer, String> topicTypeMap() {
+      Map<Integer, String> topicTypeMap = new HashMap<>();
+      topicTypeMap.put(appConf.getTemperatureMeasurementTopicId(), appConf.getTemperatureInputTopic());
+      topicTypeMap.put(appConf.getPowerMeasurementTopicId(), appConf.getPowerInputTopic());
+      topicTypeMap.put(appConf.getPressureMeasurementTopicId(), appConf.getPressureInputTopic());
+      return topicTypeMap;
    }
 }

@@ -9,9 +9,16 @@ public class AppConstants {
       public static final String KAFKA_BROKERS = "localhost:9092";
       public static final Integer MESSAGE_COUNT = 1000;
       public static final String CLIENT_ID = "client1";
-      public static final String TOPIC_MEASUREMENTS = "streaming.input.measurements";
-      public static final String TOPIC_AGGREGATED_MEASUREMENTS = "streaming.output.aggregatedMeasurements";
-      public static final String CONSUMER_AGGREGATOR = "aggregator";
+
+      public static final String TOPIC_TEMPERATURE_INPUT = "streaming.input.temperatureMeasurements"; // Celsius
+      public static final String TOPIC_PRESSURE_INPUT = "streaming.input.pressureMeasurements"; // PSI
+      public static final String TOPIC_POWER_INPUT = "streaming.input.powerMeasurements"; // Watts
+
+      public static final String TOPIC_AGGREGATED_TEMPERATURE_OUTPUT = "streaming.output.temperatureMeasurements"; // Celsius
+      public static final String TOPIC_AGGREGATED_PRESSURE_OUTPUT = "streaming.output.pressureMeasurements"; // PSI
+      public static final String TOPIC_AGGREGATED_POWER_OUTPUT = "streaming.output.powerMeasurements"; // Watts
+
+      public static final String CONSUMER_TEMPERATURE_AGGREGATOR = "temperature_aggregator";
       public static final String GROUP_ID_CONFIG = "consumerGroup1";
       public static final Integer MAX_NO_MESSAGE_FOUND_COUNT = 100;
       public static final String OFFSET_RESET_LATEST = "latest";

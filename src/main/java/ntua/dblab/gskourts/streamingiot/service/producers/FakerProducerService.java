@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import net.datafaker.Faker;
+import ntua.dblab.gskourts.streamingiot.util.AppConf;
 import ntua.dblab.gskourts.streamingiot.util.AppConstants;
 import reactor.core.publisher.Flux;
 
@@ -24,16 +25,23 @@ import reactor.core.publisher.Flux;
 @Qualifier("fakerDataProducer")
 public class FakerProducerService implements DataProducerI {
    private final Logger LOG = LoggerFactory.getLogger(FakerProducerService.class);
-   @Autowired
-   @Qualifier("measurementTypeMap")
-   private Map<Integer, String> measurementTypeMap;
+   private final Map<Integer, String> topicTypeMap;
    private final KafkaTemplate<Integer, Integer> kafkaTemplate;
+   private final AppConf appConf;
    @Value("${application.producer.produceIntervalSec}")
    private int produceIntervalSec;
    @Value("${application.producer.fakeProducer.enabled}")
    private boolean enabled;
 
    Faker faker;
+
+   @Autowired
+   public FakerProducerService(AppConf appConf, KafkaTemplate<Integer, Integer> kafkaTemplate,
+         @Qualifier("topicTypeMap") Map<Integer, String> topicTypeMap) {
+      this.appConf = appConf;
+      this.kafkaTemplate = kafkaTemplate;
+      this.topicTypeMap = topicTypeMap;
+   }
 
    @Override
    @EventListener(ApplicationStartedEvent.class)
@@ -44,14 +52,13 @@ public class FakerProducerService implements DataProducerI {
          return;
       }
       faker = new Faker();
-      Flux.interval(Duration.ofSeconds(1))
+      Flux.interval(Duration.ofSeconds(appConf.getProduceIntervalSec()))
             .map(i -> {
-               Integer measurementTypeInt = faker.random().nextInt(3);
-               return new Pair<>(measurementTypeInt, getValueByType(measurementTypeInt));
+               Integer topicId = faker.random().nextInt(appConf.getMeasurementTopicsCount()); // topicId = measurementTypeInt
+               return new Pair<>(topicId, getValueByType(topicId));
             })
             .subscribe(pair -> {
-               kafkaTemplate.send(AppConstants.TOPIC_MEASUREMENTS, pair.getValue0(), pair.getValue1());
-               LOG.info("Sent: <{},{}>", pair.getValue0(), pair.getValue1());
+               kafkaTemplate.send(topicTypeMap.get(pair.getValue0()), getPartition(pair.getValue0()), pair.getValue1());
             });
    }
 
@@ -59,11 +66,24 @@ public class FakerProducerService implements DataProducerI {
       if (type == 0) {
          return Integer.parseInt(faker.weather().temperatureCelsius().replace("°C", ""));
       } else if (type == 1) {
-         return faker.random().nextInt(0, 100);
+         return faker.random().nextInt(3, 222);
       } else if (type == 2) {
-         return faker.random().nextInt(1000, 1100);
+         return faker.random().nextInt(2500, 6900);
       } else {
-         throw new IllegalArgumentException("Measurement type not supported");
+         throw new IllegalArgumentException(String.format("Measurement type %s not supported", type));
       }
+   }
+
+   private Integer getPartition(int topicId) {
+      if (topicId == 0) {
+         return faker.random().nextInt(0, appConf.getTemperatureDevicesNum());
+      } else if (topicId == 1) {
+         return faker.random().nextInt(0, appConf.getPowerDevicesNum());
+      } else if (topicId == 2) {
+         return faker.random().nextInt(0, appConf.getPressureDevicesNum());
+      } else {
+         throw new IllegalArgumentException(String.format("Measurement type %s not supported", topicId));
+      }
+
    }
 }

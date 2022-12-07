@@ -5,6 +5,8 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import lombok.Data;
 import lombok.Generated;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -48,7 +50,8 @@ import lombok.Generated;
 @EnableScheduling
 @EnableMBeanExport(registration = RegistrationPolicy.REPLACE_EXISTING)
 @EnableAspectJAutoProxy
-@Data
+@Getter
+@Setter
 @Generated
 public class AppConf {
    private static final Logger LOG = LoggerFactory.getLogger(AppConf.class);
@@ -65,6 +68,42 @@ public class AppConf {
                   .version(buildProperties.getVersion())
                   .license(new License().name("© 2022 by Giorgos Skourtsidis").url("https://www.ntua.gr/en/")));
    }
+
+   @Value("${application.topics.measurementTopicsCount}")
+   private int measurementTopicsCount;
+   @Value("${application.topics.temperature.devicesNum}")
+   private int temperatureDevicesNum;
+   @Value("${application.topics.temperature.replicas}")
+   private int temperatureReplicas;
+   @Value("${application.topics.temperature.measurementTopicId}")
+   private int temperatureMeasurementTopicId;
+   @Value("${application.topics.temperature.name.input}")
+   private String temperatureInputTopic;
+   @Value("${application.topics.temperature.name.output}")
+   private String temperatureOutputTopic;
+   @Value("${application.topics.power.devicesNum}")
+   private int powerDevicesNum;
+   @Value("${application.topics.power.replicas}")
+   private int powerReplicas;
+   @Value("${application.topics.power.measurementTopicId}")
+   private int powerMeasurementTopicId;
+   @Value("${application.topics.power.name.input}")
+   private String powerInputTopic;
+   @Value("${application.topics.power.name.output}")
+   private String powerOutputTopic;
+   @Value("${application.topics.pressure.devicesNum}")
+   private int pressureDevicesNum;
+   @Value("${application.topics.pressure.replicas}")
+   private int pressureReplicas;
+   @Value("${application.topics.pressure.measurementTopicId}")
+   private int pressureMeasurementTopicId;
+   @Value("${application.topics.pressure.name.input}")
+   private String pressureInputTopic;
+   @Value("${application.topics.pressure.name.output}")
+   private String pressureOutputTopic;
+
+   @Value("${application.producer.produceIntervalSec}")
+   private int produceIntervalSec;
 
    //@Bean
    //public CommonsRequestLoggingFilter requestLoggingFilter() {
