@@ -105,6 +105,9 @@ public class AppConf {
    @Value("${application.producer.produceIntervalSec}")
    private int produceIntervalSec;
 
+   @Value("${spring.kafka.consumer.properties.deadletter.topic.name}")
+   private String deadLetterTopicName;
+
    //@Bean
    //public CommonsRequestLoggingFilter requestLoggingFilter() {
    //   CommonsRequestLoggingFilter loggingFilter = new CommonsRequestLoggingFilter();

@@ -66,6 +66,13 @@ public class AppBeans {
    }
 
    @Bean
+   NewTopic deadLetterTopic() {
+      return TopicBuilder.name(appConf.getDeadLetterTopicName()).partitions(1)
+            .replicas(1)
+            .build();
+   }
+
+   @Bean
    @Qualifier("topicTypeMap")
    Map<Integer, String> topicTypeMap() {
       Map<Integer, String> topicTypeMap = new HashMap<>();

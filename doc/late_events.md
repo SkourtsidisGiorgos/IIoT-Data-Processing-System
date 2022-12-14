@@ -1,3 +1,7 @@
+* https://github.com/evgeniy-khist/spring-kafka-non-blocking-retries-and-dlt
+* https://github.com/spring-projects/spring-kafka/tree/main/samples
+* https://stackoverflow.com/questions/56728833/seektocurrenterrorhandler-deadletterpublishingrecoverer-is-not-handling-deseria
+
 There are several ways to handle late events in a Kafka Streams topology. Here are a few options:
 
 - Use a windowed aggregation to discard late events. With windowed aggregations, you can specify a window size and grace period, which determines how long a record can be late before it is discarded. For example, you could use a timeWindow() aggregation with a 1-minute window size and a 10-second grace period, which would allow records to be up to 10 seconds late before they are discarded.
@@ -15,7 +19,6 @@ There are several ways to handle late events in a Kafka Streams topology. Here a
 - Alternatively, you can use a state store with a TTL (time-to-live) to automatically remove stale data from the store after a certain amount of time. This can help to prevent outdated data from being processed by the Streams application.
 
 Overall, the best approach for handling late events in a Kafka Streams topology will depend on your specific use case and requirements.
-
 
 
 # How to process late events written in a store
@@ -150,3 +153,89 @@ In Apache Kafka, "exactly-once" delivery is a guarantee that a message will be d
 The need for exactly-once delivery becomes especially important when dealing with late events, which are messages that arrive after the processing window for that message has closed. Late events can cause problems if they are not handled correctly, as they may be processed out of order or dropped altogether. By using the exactly-once delivery guarantee, you can ensure that late events are handled correctly and delivered to their destination without duplication or loss.
 
 To achieve exactly-once delivery in Kafka, you can use a combination of transactional producers and idempotent consumers. This allows you to ensure that messages are only processed once, even if there are failures or retries during processing. You can also use the Kafka Streams API, which provides built-in support for exactly-once processing semantics.
+
+
+
+# How to store messages in a  dead letter topic in Kafka  Streams using Spring Kafka?
+To store messages in a dead letter topic in Kafka Streams using Spring Kafka, you can use a DeadLetterPublishingRecoverer to send failed messages to a dead letter topic. You can configure the DeadLetterPublishingRecoverer with the desired dead letter topic and other settings, and then pass it to a SeekToCurrentErrorHandler when you create your Kafka Streams instance.
+
+Here is an example of how you might do this:
+
+```java
+// Create a properties object to hold the configuration for the Kafka Streams instance
+Properties streamsProperties = new Properties();
+// Set the application ID for the Kafka Streams instance
+streamsProperties.put(StreamsConfig.APPLICATION_ID_CONFIG, "my-streams-application");
+// Set other necessary configuration settings for the Kafka Streams instance
+
+// Create a DeadLetterPublishingRecoverer with the desired dead letter topic and other settings
+DeadLetterPublishingRecoverer recoverer = new DeadLetterPublishingRecoverer(producerFactory, (r, e) -> new TopicPartition("my-dead-letter-topic", r.partition()));
+
+// Create a SeekToCurrentErrorHandler with the DeadLetterPublishingRecoverer
+SeekToCurrentErrorHandler errorHandler = new SeekToCurrentErrorHandler(recoverer, streamsProperties);
+
+// Create the Kafka Streams instance using the properties and error handler
+KafkaStreams streams = new KafkaStreams(topology, streamsProperties, errorHandler);
+```
+
+This will cause failed messages to be sent to the specified dead letter topic, where they can be stored for later inspection or processing.
+
+
+
+
+# what is SeekToCurrentErrorHandler ?
+SeekToCurrentErrorHandler is an implementation of the ErrorHandler interface from the Kafka Streams API. It is used to handle errors that occur during the processing of messages in a Kafka Streams application.
+
+The SeekToCurrentErrorHandler seeks the stream's input topics to the current position, effectively skipping over any failed messages. This allows the Kafka Streams application to continue processing messages, rather than stopping due to a failure.
+
+You can specify a DeadLetterPublishingRecoverer when creating a SeekToCurrentErrorHandler, which will cause failed messages to be sent to a dead letter topic for later inspection or processing. This can be useful for debugging or for implementing custom error handling logic.
+
+Here is an example of how you might create a SeekToCurrentErrorHandler with a DeadLetterPublishingRecoverer:
+
+```java
+// Create a DeadLetterPublishingRecoverer with the desired dead letter topic and other settings
+DeadLetterPublishingRecoverer recoverer = new DeadLetterPublishingRecoverer(producerFactory, (r, e) -> new TopicPartition("my-dead-letter-topic", r.partition()));
+
+// Create a SeekToCurrentErrorHandler with the DeadLetterPublishingRecoverer
+SeekToCurrentErrorHandler errorHandler = new SeekToCurrentErrorHandler(recoverer, streamsProperties);
+```
+
+You can then pass the errorHandler to the KafkaStreams constructor when creating your Kafka Streams instance, so that it is used to handle errors that occur during message processing.
+
+
+
+# How to store failed messages or late events in a  dead letter topic in Kafka  Streams using Spring Kafka?
+To store failed messages or late events in a dead letter topic in Kafka Streams using Spring Kafka, you can use a `DeadLetterPublishingRecoverer`. This class is part of the spring-kafka library and allows you to specify a dead letter topic where failed messages or late events will be published.
+
+Here's an example of how you can use a `DeadLetterPublishingRecoverer` in a Spring Kafka application:
+
+```java
+@Bean
+public DeadLetterPublishingRecoverer recoverer(KafkaTemplate<Object, Object> template) {
+    return new DeadLetterPublishingRecoverer(template);
+}
+
+@Bean
+public RetryTemplate retryTemplate() {
+    RetryTemplate retryTemplate = new RetryTemplate();
+    // configure retry settings
+    return retryTemplate;
+}
+
+@Bean
+public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, String>> kafkaListenerContainerFactory(
+    ConsumerFactory<String, String> consumerFactory,
+    KafkaTemplate<Object, Object> template) {
+
+    ConcurrentKafkaListenerContainerFactory<String, String> factory =
+        new ConcurrentKafkaListenerContainerFactory<>();
+    factory.setConsumerFactory(consumerFactory);
+    factory.setErrorHandler(new SeekToCurrentErrorHandler(recoverer(template), retryTemplate()));
+
+    return factory;
+}
+```
+In the example above, we configure a `DeadLetterPublishingRecoverer` as a bean and specify a KafkaTemplate to use for publishing failed messages or late events to the dead letter topic. We also configure a `RetryTemplate` to specify retry settings for failed messages.
+
+Finally, we create a `KafkaListenerContainerFactory` and set the `DeadLetterPublishingRecoverer`
+

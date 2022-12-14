@@ -47,11 +47,16 @@ spring:
          enable-auto-commit: false # Whether the consumer's offset is periodically committed in the background.
          auto-commit-interval: 15 # Frequency with which the consumer offsets are auto-committed to Kafka if 'enable.auto.commit' is set to true.
          group-id: group1
+         properties:
+            deadletterqueue.topic.name: deadletterQueue
+            default:
+               deserialization.exception.handler.class: org.springframework.kafka.listener.DeadLetterPublishingRecoverer
       streams:
          replication-factor: 1
          application-id: spring-boot-streams
       retry:
          topic.max-delay: 15 # Maximum wait between retries. If less than the delay then the default of 30 seconds is applied.
+      
 
 application:
    modbusPal:
