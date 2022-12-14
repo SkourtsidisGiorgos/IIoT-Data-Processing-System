@@ -17,7 +17,7 @@ public class AppConstants {
       public static final String TOPIC_AGGREGATED_TEMPERATURE_OUTPUT = "streaming.output.temperatureMeasurements"; // Celsius
       public static final String TOPIC_AGGREGATED_PRESSURE_OUTPUT = "streaming.output.pressureMeasurements"; // PSI
       public static final String TOPIC_AGGREGATED_POWER_OUTPUT = "streaming.output.powerMeasurements"; // Watts
-
+      public static final String TEMPERATURE_AGGREGATE_STORE = "temperatureAggregateStore";
       public static final String CONSUMER_TEMPERATURE_AGGREGATOR = "temperature_aggregator";
       public static final String GROUP_ID_CONFIG = "consumerGroup1";
       public static final Integer MAX_NO_MESSAGE_FOUND_COUNT = 100;

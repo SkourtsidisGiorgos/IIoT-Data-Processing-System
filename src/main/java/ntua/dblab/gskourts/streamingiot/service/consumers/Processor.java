@@ -2,29 +2,31 @@ package ntua.dblab.gskourts.streamingiot.service.consumers;
 
 import java.time.Duration;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.kstream.Consumed;
+import org.apache.kafka.streams.kstream.KGroupedStream;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.KTable;
 import org.apache.kafka.streams.kstream.Materialized;
 import org.apache.kafka.streams.kstream.Produced;
 import org.apache.kafka.streams.kstream.Suppressed;
+import org.apache.kafka.streams.kstream.TimeWindowedKStream;
 import org.apache.kafka.streams.kstream.TimeWindows;
 import org.apache.kafka.streams.kstream.Windowed;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
+import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde;
+import io.vavr.Tuple2;
 import ntua.dblab.gskourts.streamingiot.util.AppConf;
-import ntua.dblab.gskourts.streamingiot.util.AppConstants;
+import ntua.dblab.gskourts.streamingiot.util.serdes.IntegerArraySerializer;
+import ntua.dblab.gskourts.streamingiot.util.avro.CountAndSum;
 
 @Component
 public class Processor {
@@ -52,37 +54,72 @@ public class Processor {
       }
 
       @Autowired
-      public void processTemperature(StreamsBuilder builder) {
+      public void process(StreamsBuilder builder) {
+            processTemperature(builder);
+            processPressure(builder);
+            processPower(builder);
+      }
 
-            // Serializers/deserializers (serde)
-            final Serde<Integer> integerSerde = Serdes.Integer();
-            final Serde<String> stringSerde = Serdes.String();
-            final Serde<Long> longSerde = Serdes.Long();
-
-            // Construct a `KStream` from the input topic
+      @Async
+      private void processTemperature(StreamsBuilder builder) {
+            LOG.info("START: Process Temperature");
             KStream<Integer, Integer> stream = builder
-                        .stream(tempInputTopic, Consumed.with(integerSerde, integerSerde))
-                        .peek((key, value) -> LOG.info("Received measurement={}, key={}", value, key));
-
-            // Create a window
+                        .stream(tempInputTopic, Consumed.with(Serdes.Integer(), Serdes.Integer()))
+                        .peek((key, value) -> LOG.info("Topic: {}. Received measurement={}, key={}",
+                                    tempInputTopic, value, key));
             Duration windowSize = Duration.ofSeconds(aggregateWindowSizeSec);
             Duration graceSize = Duration.ofSeconds(gracePeriodSec);
             TimeWindows tumblingWindow = TimeWindows.ofSizeAndGrace(windowSize, graceSize);
-            LOG.info("Aggregate the values of the same key every {} seconds", windowSize.getSeconds());
-            // Perform Aggregation
+            LOG.info("Temp: Aggregate the values of the same key every {} seconds", windowSize.getSeconds());
+
             final KTable<Windowed<Integer>, Integer> aggregated = stream.groupByKey()
                         .windowedBy(tumblingWindow)
                         .aggregate(() -> 0, (key, value, total) -> total + value,
                                     Materialized.with((Serdes.Integer()), Serdes.Integer()))
                         .suppress(Suppressed.untilWindowCloses(Suppressed.BufferConfig.unbounded().shutDownWhenFull()));
-            //         .suppress(Suppressed.untilWindowCloses(Suppressed.BufferConfig.unbounded()));
 
             aggregated.toStream()
-                        .peek((key, value) -> LOG.trace("Aggregated measurement={}, key={}", value, key))
                         .map((wk, value) -> KeyValue.pair(wk.key(), value))
-                        .peek((key, value) -> LOG.trace("AGGREGATED: key={}, value={}", key, value))
+                        .peek((key, value) -> LOG.trace("Topic: {}. AGGREGATED: key={}, value={}",
+                                    tempInputTopic, key, value))
                         .to(tempOutputTopic, Produced.with(Serdes.Integer(), Serdes.Integer()));
+
+            LOG.info("END: Process Temperature");
       }
+
+      @Async
+      private void processPower(StreamsBuilder builder) {
+            LOG.info("START: Process power");
+            KStream<Integer, Integer> stream = builder
+                        .stream(powerInputTopic, Consumed.with(Serdes.Integer(), Serdes.Integer()))
+                        .peek((key, value) -> LOG.info("Topic: {}. Received measurement={}, key={}",
+                                    powerInputTopic, value, key));
+            Duration windowSize = Duration.ofSeconds(aggregateWindowSizeSec);
+            Duration graceSize = Duration.ofSeconds(gracePeriodSec);
+            TimeWindows tumblingWindow = TimeWindows.ofSizeAndGrace(windowSize, graceSize);
+            LOG.info("Power: Aggregate the values of the same key every {} seconds", windowSize.getSeconds());
+
+            final KTable<Windowed<Integer>, Integer> aggregated = stream.groupByKey()
+                        .windowedBy(tumblingWindow)
+                        .aggregate(() -> 0, (key, value, total) -> total + value,
+                                    Materialized.with((Serdes.Integer()), Serdes.Integer()))
+                        .suppress(Suppressed.untilWindowCloses(Suppressed.BufferConfig.unbounded().shutDownWhenFull()));
+
+            aggregated.toStream()
+                        .map((wk, value) -> KeyValue.pair(wk.key(), value))
+                        .peek((key, value) -> LOG.trace("Topic: {}. AGGREGATED: key={}, value={}",
+                                    powerInputTopic, key, value))
+                        .to(powerOutputTopic, Produced.with(Serdes.Integer(), Serdes.Integer()));
+
+            LOG.info("END: Process power");
+      }
+
+      @Async
+      private void processPressure(StreamsBuilder builder) {
+            LOG.info("START: Process pressure");
+            LOG.info("END: Process pressure");
+      }
+
 }
 
 //@Component

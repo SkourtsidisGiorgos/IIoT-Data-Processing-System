@@ -36,3 +36,4 @@ build/
 # Project Specific #
 test.log
 logs
+src/main/java/ntua/dblab/gskourts/streamingiot/util/avro/CountAndSum.java

@@ -47,8 +47,7 @@ public class FakerProducerService implements DataProducerI {
    @EventListener(ApplicationStartedEvent.class)
    public void generate() {
       if (!enabled) {
-         LOG.trace("enabled={}", enabled);
-         LOG.info("FakerProducerService is disabled");
+         LOG.trace("FakerProducerService is disabled");
          return;
       }
       faker = new Faker();
