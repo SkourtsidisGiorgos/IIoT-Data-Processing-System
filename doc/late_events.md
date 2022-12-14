@@ -98,3 +98,55 @@ To use a dead letter queue in Kafka Streams, you can configure the `processing.g
 
 
 
+# In Kafka Spring how to configure a Dead Letter Queue and write Late events in a Dead Letter Topic?
+
+To configure a dead letter queue and write late events to a dead letter topic in Kafka Spring, you can do the following:
+
+In your Spring configuration, define a dead letter queue for your Kafka consumer factory. This will enable the consumer to automatically send messages that cannot be processed to the dead letter queue:
+
+```java
+@Bean
+public ConsumerFactory<String, String> consumerFactory() {
+    Map<String, Object> props = new HashMap<>();
+    // Other consumer configuration properties
+
+    // Configure the dead letter queue
+    props.put(ConsumerConfig.DEFAULT_DESERIALIZATION_EXCEPTION_HANDLER_CLASS_CONFIG, DeadLetterPublishingRecoverer.class);
+    return new DefaultKafkaConsumerFactory<>(props);
+}
+```
+
+In your consumer class, use the DeadLetterPublishingRecoverer to publish failed messages to the dead letter topic. You can do this by passing the dead letter topic name as a parameter to the DeadLetterPublishingRecoverer constructor:
+
+```java
+@KafkaListener(topics = "my-topic")
+public void listen(String message) {
+    // Handle the message
+}
+
+@Bean
+public DeadLetterPublishingRecoverer recoverer(KafkaTemplate<Object, Object> kafkaTemplate) {
+    return new DeadLetterPublishingRecoverer(kafkaTemplate, (record, ex) -> new TopicPartition("my-dead-letter-topic", record.partition()));
+}
+```
+This will automatically publish any failed messages to the my-dead-letter-topic topic, which you can then consume and process as needed.
+
+
+# Can i configure dead letter queue using application.properties?
+
+Yes, you can configure the dead letter queue using the application.properties file in Spring. To do this, you can add the following properties to the file:
+
+
+`spring.kafka.consumer.properties.default.deserialization.exception.handler.class=org.springframework.kafka.listener.DeadLetterPublishingRecoverer`
+
+This will enable the dead letter queue for your Kafka consumer factory, using the default settings for the DeadLetterPublishingRecoverer. You can then customize the dead letter topic and other settings using the @Bean method for the DeadLetterPublishingRecoverer in your Spring configuration, as shown in the previous answer.
+
+
+
+
+# In Kafka what is "exacly-one" and why do i need it to handle late events?
+In Apache Kafka, "exactly-once" delivery is a guarantee that a message will be delivered exactly once to its destination, without duplication and without loss. This is an important guarantee to have when processing messages in a distributed system, as it ensures that no messages are lost or processed multiple times, which can lead to incorrect results or other issues.
+
+The need for exactly-once delivery becomes especially important when dealing with late events, which are messages that arrive after the processing window for that message has closed. Late events can cause problems if they are not handled correctly, as they may be processed out of order or dropped altogether. By using the exactly-once delivery guarantee, you can ensure that late events are handled correctly and delivered to their destination without duplication or loss.
+
+To achieve exactly-once delivery in Kafka, you can use a combination of transactional producers and idempotent consumers. This allows you to ensure that messages are only processed once, even if there are failures or retries during processing. You can also use the Kafka Streams API, which provides built-in support for exactly-once processing semantics.
