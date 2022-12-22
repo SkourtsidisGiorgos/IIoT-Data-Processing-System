@@ -1,5 +1,6 @@
 package ntua.dblab.gskourts.streamingiot.util;
 
+import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
@@ -7,6 +8,11 @@ import lombok.Data;
 import lombok.Generated;
 import lombok.Getter;
 import lombok.Setter;
+import ntua.dblab.gskourts.streamingiot.util.avro.CountAndSum;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -43,6 +49,21 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import lombok.Data;
 import lombok.Generated;
+
+import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde;
+
+import org.apache.kafka.streams.StreamsConfig;
+import static java.lang.Integer.parseInt;
+import static java.lang.Short.parseShort;
+import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toMap;
+import static org.apache.kafka.common.serialization.Serdes.Double;
+import static org.apache.kafka.common.serialization.Serdes.Long;
+import static org.apache.kafka.streams.StreamsConfig.APPLICATION_ID_CONFIG;
+import static org.apache.kafka.streams.StreamsConfig.BOOTSTRAP_SERVERS_CONFIG;
+import static org.apache.kafka.streams.StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG;
+import static org.apache.kafka.streams.StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG;
+import static org.apache.kafka.streams.StreamsConfig.REPLICATION_FACTOR_CONFIG;
 
 @Configuration
 @EnableAsync
@@ -105,7 +126,7 @@ public class AppConf {
    @Value("${application.producer.produceIntervalSec}")
    private int produceIntervalSec;
 
-   @Value("${spring.kafka.consumer.properties.deadletter.topic.name}")
+   @Value("${spring.kafka.consumer.properties.deadletterqueue.topic.name}")
    private String deadLetterTopicName;
 
    //@Bean
@@ -117,4 +138,18 @@ public class AppConf {
    //   loggingFilter.setIncludeHeaders(true);
    //   return loggingFilter;
    //}
+
+   @Value("${application.schema.registry.host}")
+   private String schemaRegistryHost;
+   @Value("${application.schema.registry.port}")
+   private String schemaRegistryPort;
+
+   @Bean
+   public SpecificAvroSerde<CountAndSum> countAndSumSerde() {
+      SpecificAvroSerde<CountAndSum> serde = new SpecificAvroSerde<>();
+      Map<String, String> serdeConfig = new HashMap<>();
+      serdeConfig.put("schema.registry.url", String.format("http://%s:%s", schemaRegistryHost, schemaRegistryPort));
+      serde.configure(serdeConfig, false);
+      return serde;
+   }
 }

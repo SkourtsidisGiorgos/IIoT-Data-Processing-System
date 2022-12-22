@@ -183,47 +183,59 @@ services:
       KAFKA_REST_LISTENERS: "http://0.0.0.0:8082"
       KAFKA_REST_SCHEMA_REGISTRY_URL: 'http://schema-registry:8081'
 
-  #grafana:
-  #    image: grafana/grafana
-  #    container_name: grafana
-  #    #depends_on:
-  #    #  - prometheus
-  #    ports:
-  #      - 3000:3000
-  #    volumes:
-  #      - ./monitoring/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
-  #      - ./monitoring/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
-  #      - ./monitoring/grafana/config.ini:/etc/grafana/config.ini
-  #      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards
-  #      - grafana_data:/var/lib/grafana
-  #    environment:
-  #      - GF_SECURITY_ADMIN_PASSWORD=admin
-  #      - GF_USERS_ALLOW_SIGN_UP=false
-  #      # - GF_SERVER_DOMAIN=myrul.com
-  #      # - GF_SMTP_ENABLED=true
-  #      # - GF_SMTP_HOST=smtp.gmail.com:587
-  #      # - GF_SMTP_USER=myadrress@gmail.com
-  #      # - GF_SMTP_PASSWORD=mypassword
-  #      # - GF_SMTP_FROM_ADDRESS=myaddress@gmail.com
+  grafana:
+      image: grafana/grafana
+      container_name: grafana
+      #depends_on:
+      #  - prometheus
+      ports:
+        - 3000:3000
+      volumes:
+        - ./monitoring/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+        - ./monitoring/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+        - ./monitoring/grafana/config.ini:/etc/grafana/config.ini
+        - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards
+        - grafana_data:/var/lib/grafana
+      environment:
+        - GF_SECURITY_ADMIN_PASSWORD=admin
+        - GF_USERS_ALLOW_SIGN_UP=false
+        # - GF_SERVER_DOMAIN=myrul.com
+        # - GF_SMTP_ENABLED=true
+        # - GF_SMTP_HOST=smtp.gmail.com:587
+        # - GF_SMTP_USER=myadrress@gmail.com
+        # - GF_SMTP_PASSWORD=mypassword
+        # - GF_SMTP_FROM_ADDRESS=myaddress@gmail.com
 
-  #prometheus:
-  #  image: prom/prometheus
-  #  user: root
-  #  container_name: prometheus
-  #  volumes:
-  #  # - ./monitoring/prometheus:/etc/prometheus
-  #  - ./monitoring/prometheus/prometheus_dev.yml:/etc/prometheus/prometheus.yml
-  #  # - ./monitoring/prometheus/rules.yml:/etc/prometheus/rules.yml
-  #  - prometheus_data:/prometheus
-  #  command:
-  #    - '--config.file=/etc/prometheus/prometheus.yml'
-  #    # - '-alertmanager.url=http://alertmanager:9093'
-  #  expose:
-  #    - 9090
-  #  ports:
-  #    - 9090:9090
-  #  depends_on:
-  #    - cadvisor
+  cadvisor:
+      image: google/cadvisor
+      container_name: cadvisor
+      privileged: true
+      volumes:
+        - /:/rootfs:ro
+        - /var/run:/var/run:rw
+        - /sys:/sys:ro
+        - /var/lib/docker/:/var/lib/docker:ro
+      ports:
+        - 8080:8080
+
+  prometheus:
+    image: prom/prometheus
+    user: root
+    container_name: prometheus
+    volumes:
+    # - ./monitoring/prometheus:/etc/prometheus
+    - ./monitoring/prometheus/prometheus_dev.yml:/etc/prometheus/prometheus.yml
+    # - ./monitoring/prometheus/rules.yml:/etc/prometheus/rules.yml
+    - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      # - '-alertmanager.url=http://alertmanager:9093'
+    expose:
+      - 9090
+    ports:
+      - 9090:9090
+    depends_on:
+      - cadvisor
 
 #  influxdb:
 #    image: influxdb:latest

@@ -5,33 +5,11 @@
    "fields": [
       {
          "name": "count",
-         "type": "int",
-         "default": 0,
-         "doc": "The number of ratings",
-         "aliases": [
-            "cnt"
-         ],
-         "order": "ignore",
-         "logicalType": "count",
-         "precision": 32,
-         "scale": 0,
-         "size": 4,
-         "signed": false,
-         "min": 0
+         "type": "long"
       },
       {
-         "name": "average",
-         "type": "double",
-         "default": 0.0,
-         "logicalType": "decimal",
-         "precision": 3,
-         "scale": 2,
-         "doc": "Average rating",
-         "aliases": [
-            "avg"
-         ],
-         "order": "ignore",
-         "customProp": "customValue"
+         "name": "sum",
+         "type": "double"
       }
    ]
 }

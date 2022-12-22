@@ -59,6 +59,9 @@ spring:
       
 
 application:
+   schema.registry:
+      host: localhost
+      port: 8081
    modbusPal:
       host: localhost
       port: 10333

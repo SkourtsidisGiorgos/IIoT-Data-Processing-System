@@ -1,6 +1,7 @@
 package ntua.dblab.gskourts.streamingiot.service.consumers;
 
 import java.time.Duration;
+import static org.apache.kafka.common.serialization.Serdes.Long;
 
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KeyValue;
@@ -37,20 +38,21 @@ public class Processor {
       private final String pressureOutputTopic;
       private final String powerInputTopic;
       private final String powerOutputTopic;
+      private final SpecificAvroSerde<CountAndSum> countAndSumSerde;
       @Value("${application.consumer.aggregator.aggregateWindowSizeSec}")
       private int aggregateWindowSizeSec;
 
       @Value("${application.consumer.aggregator.gracePeriodSec}")
       private int gracePeriodSec;
 
-      Processor(AppConf appConf) {
+      Processor(AppConf appConf, SpecificAvroSerde<CountAndSum> countAndSumSerde) {
             this.tempInputTopic = appConf.getTemperatureInputTopic();
             this.tempOutputTopic = appConf.getTemperatureOutputTopic();
             this.pressureInputTopic = appConf.getPressureInputTopic();
             this.pressureOutputTopic = appConf.getPressureOutputTopic();
             this.powerInputTopic = appConf.getPowerInputTopic();
             this.powerOutputTopic = appConf.getPowerOutputTopic();
-
+            this.countAndSumSerde = countAndSumSerde;
       }
 
       @Autowired
@@ -65,24 +67,29 @@ public class Processor {
             LOG.info("START: Process Temperature");
             KStream<Integer, Integer> stream = builder
                         .stream(tempInputTopic, Consumed.with(Serdes.Integer(), Serdes.Integer()))
-                        .peek((key, value) -> LOG.info("Topic: {}. Received measurement={}, key={}",
+                        .peek((key, value) -> LOG.info("Topic: {}. Temperature={}, key={}",
                                     tempInputTopic, value, key));
             Duration windowSize = Duration.ofSeconds(aggregateWindowSizeSec);
             Duration graceSize = Duration.ofSeconds(gracePeriodSec);
             TimeWindows tumblingWindow = TimeWindows.ofSizeAndGrace(windowSize, graceSize);
             LOG.info("Temp: Aggregate the values of the same key every {} seconds", windowSize.getSeconds());
 
-            final KTable<Windowed<Integer>, Integer> aggregated = stream.groupByKey()
-                        .windowedBy(tumblingWindow)
-                        .aggregate(() -> 0, (key, value, total) -> total + value,
-                                    Materialized.with((Serdes.Integer()), Serdes.Integer()))
-                        .suppress(Suppressed.untilWindowCloses(Suppressed.BufferConfig.unbounded().shutDownWhenFull()));
+            TimeWindowedKStream<Integer, Integer> windowed = stream.groupByKey()
+                        .windowedBy(tumblingWindow);
+
+            KTable<Windowed<Integer>, CountAndSum> aggregated = windowed.aggregate(() -> new CountAndSum(0L, 0.0),
+                        (key, value, aggregate) -> {
+                              aggregate.setCount(aggregate.getCount() + 1);
+                              aggregate.setSum(aggregate.getSum() + value);
+                              return aggregate;
+                        },
+                        Materialized.with(Serdes.Integer(), countAndSumSerde));
 
             aggregated.toStream()
-                        .map((wk, value) -> KeyValue.pair(wk.key(), value))
-                        .peek((key, value) -> LOG.trace("Topic: {}. AGGREGATED: key={}, value={}",
-                                    tempInputTopic, key, value))
-                        .to(tempOutputTopic, Produced.with(Serdes.Integer(), Serdes.Integer()));
+                        .map((wk, value) -> KeyValue.pair(wk.key(), (float) value.getSum() / value.getCount()))
+                        .peek((key, value) -> LOG.trace("Topic: {}. AGGREGATED: key={}, average={}",
+                                    tempOutputTopic, key, value))
+                        .to(tempOutputTopic, Produced.with(Serdes.Integer(), Serdes.Float()));
 
             LOG.info("END: Process Temperature");
       }
@@ -92,7 +99,7 @@ public class Processor {
             LOG.info("START: Process power");
             KStream<Integer, Integer> stream = builder
                         .stream(powerInputTopic, Consumed.with(Serdes.Integer(), Serdes.Integer()))
-                        .peek((key, value) -> LOG.info("Topic: {}. Received measurement={}, key={}",
+                        .peek((key, value) -> LOG.info("Topic: {}. Power={}, key={}",
                                     powerInputTopic, value, key));
             Duration windowSize = Duration.ofSeconds(aggregateWindowSizeSec);
             Duration graceSize = Duration.ofSeconds(gracePeriodSec);
@@ -108,7 +115,7 @@ public class Processor {
             aggregated.toStream()
                         .map((wk, value) -> KeyValue.pair(wk.key(), value))
                         .peek((key, value) -> LOG.trace("Topic: {}. AGGREGATED: key={}, value={}",
-                                    powerInputTopic, key, value))
+                                    powerOutputTopic, key, value))
                         .to(powerOutputTopic, Produced.with(Serdes.Integer(), Serdes.Integer()));
 
             LOG.info("END: Process power");
@@ -117,9 +124,33 @@ public class Processor {
       @Async
       private void processPressure(StreamsBuilder builder) {
             LOG.info("START: Process pressure");
+            KStream<Integer, Integer> stream = builder
+                        .stream(tempInputTopic, Consumed.with(Serdes.Integer(), Serdes.Integer()))
+                        .peek((key, value) -> LOG.info("Topic: {}. Pressure={}, key={}",
+                                    pressureInputTopic, value, key));
+            Duration windowSize = Duration.ofSeconds(aggregateWindowSizeSec);
+            Duration graceSize = Duration.ofSeconds(gracePeriodSec);
+            TimeWindows tumblingWindow = TimeWindows.ofSizeAndGrace(windowSize, graceSize);
+
+            TimeWindowedKStream<Integer, Integer> windowed = stream.groupByKey()
+                        .windowedBy(tumblingWindow);
+
+            KTable<Windowed<Integer>, CountAndSum> aggregated = windowed.aggregate(() -> new CountAndSum(0L, 0.0),
+                        (key, value, aggregate) -> {
+                              aggregate.setCount(aggregate.getCount() + 1);
+                              aggregate.setSum(aggregate.getSum() + value);
+                              return aggregate;
+                        },
+                        Materialized.with(Serdes.Integer(), countAndSumSerde));
+
+            aggregated.toStream()
+                        .map((wk, value) -> KeyValue.pair(wk.key(), (float) value.getSum() / value.getCount()))
+                        .peek((key, value) -> LOG.trace("Topic: {}. AGGREGATED: key={}, value={}",
+                                    pressureOutputTopic, key, value))
+                        .to(pressureOutputTopic, Produced.with(Serdes.Integer(), Serdes.Float()));
+
             LOG.info("END: Process pressure");
       }
-
 }
 
 //@Component
