@@ -25,3 +25,10 @@ etc
   - Περιγραφή και εικόνα
   - Βοηθητικό code snippet και εξήγηση
   - Πλεονεκτήματα υλοποίησης μέ χρήση spring boot
+
+
+
+
+# Sythetic data generation
+- https://github.com/ydataai/ydata-synthetic
+- https://github.com/gretelai/gretel-synthetics

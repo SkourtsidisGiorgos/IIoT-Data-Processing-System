@@ -13,6 +13,23 @@ management:
       web.base-path: /manage
       web.exposure.include: "*"
       web.exposure.exclude: heapdump
+   metrics:
+      allowed: spring, jvm, gc, kafka, service, component, repository, hikaricp, http, application, system, disk, executor
+      #enable:
+      #  all: true
+      #  appinfo: true
+      #  hikaricp: true
+      registries: prometheus # jmx, graphite
+      export.graphite:
+         enabled: false # only for graphite
+         host: localhost
+         port: 2004
+         step: 5s
+         instance-id: ip # Valid auto-modes: ip, host, fqdn, jvmid, uuid
+      #export.prometheus:
+      #  descriptions: false
+      #  step: 10s
+
 
 spring:
    banner.location: classpath:banner.txt

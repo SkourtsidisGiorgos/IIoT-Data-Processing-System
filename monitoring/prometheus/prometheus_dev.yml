@@ -12,11 +12,13 @@ scrape_configs:
     static_configs:
       - targets: ['cadvisor:8080']
 
-  - job_name: 'airpol_srb_fc'
+  - job_name: 'spboot-ntua-streaming-iot'
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 5s
     static_configs:
-      - targets: ['airpol_srb_fc:10181']
+      - targets: ['localhost:10000']
 
-  - job_name: 'node-exporter'
-    static_configs:
-      - targets: ['node-exporter:9100']
+  #- job_name: 'node-exporter'
+  #  static_configs:
+  #    - targets: ['node-exporter:9100']
 

@@ -5,6 +5,7 @@ volumes:
     prometheus_data: {}
     grafana_data: {}
     influxdb2:
+    redis_data: 
 
 
 services:
@@ -186,6 +187,7 @@ services:
   grafana:
       image: grafana/grafana
       container_name: grafana
+      #network_mode: host
       #depends_on:
       #  - prometheus
       ports:
@@ -206,6 +208,16 @@ services:
         # - GF_SMTP_PASSWORD=mypassword
         # - GF_SMTP_FROM_ADDRESS=myaddress@gmail.com
 
+  #graphite:
+  #  image: graphiteapp/graphite-statsd
+  #  restart: always
+  #  ports:
+  #    - "18081:80"
+  #    - "2003-2004:2003-2004"
+  #    - "2023-2024:2023-2024"
+  #    - "8125:8125/udp"
+  #    - "8126:8126"
+
   cadvisor:
       image: google/cadvisor
       container_name: cadvisor
@@ -217,6 +229,7 @@ services:
         - /var/lib/docker/:/var/lib/docker:ro
       ports:
         - 8080:8080
+      #network_mode: host
 
   prometheus:
     image: prom/prometheus
@@ -234,8 +247,20 @@ services:
       - 9090
     ports:
       - 9090:9090
+      #- 10000:10000
     depends_on:
       - cadvisor
+    #network_mode: host
+
+  redis:
+    image: 'bitnami/redis:latest'
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - '6379:6379'
+    volumes: 
+      - redis_data:/data
+    #network_mode: host
 
 #  influxdb:
 #    image: influxdb:latest
