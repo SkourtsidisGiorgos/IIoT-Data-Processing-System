@@ -1,8 +1,6 @@
 #spring.main.banner-mode: off
 debug: false
 
-logging.level._org.springframework.web.servlet.HandlerMapping.Mappings: debug
-
 server:
    port: 10000
    shutdown: graceful
@@ -147,3 +145,17 @@ springdoc:
     path: /api-docs
     #use-management-port: true
 
+logging:
+   #file: /logs/streaming-iot.log
+   #pattern:
+   #   # console: %d{yyyy-MM-dd HH:mm:ss} - %msg%n
+   #   file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+   #rollingpolicy:
+   #   file-name-pattern: logs/archived/streaming-iot_%d{dd-MM-yyyy}-%i.log
+   #   max-file-size: 10MB
+   #   max-history: 10
+   #   total-size-cap: 100MB
+   #   clean-history-on-start: true
+   level:
+      _org.springframework.web.servlet.HandlerMapping.Mappings: debug
+   
