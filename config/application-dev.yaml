@@ -10,11 +10,27 @@ server:
 
 management:
    endpoints:
-      web.base-path: /manage
-      web.exposure.include: "*"
-      web.exposure.exclude: heapdump
+      web:
+         base-path: /manage
+         exposure:
+            include: "*"
+            exclude: heapdump
+   endpoint:
+      health:
+         show-details: ALWAYS
+         group:
+            health-group.include: ping, diskSpace
+   info:
+      build.enabled: true
+      env.enabled: true
+      git.enabled: true
+      #git.mode: full
+      java.enabled: true
+      os.enabled: true
    metrics:
-      allowed: spring, jvm, gc, kafka, service, component, repository, hikaricp, http, application, system, disk, executor
+      allowed:
+      #allowed: '*'
+      #allowed: spring, jvm, gc, kafka, service, component, repository, hikaricp, http, application, system, disk, executor
       #enable:
       #  all: true
       #  appinfo: true
@@ -30,9 +46,16 @@ management:
       #  descriptions: false
       #  step: 10s
 
-
 spring:
+   application.name: streaming-iot
    banner.location: classpath:banner.txt
+   boot:
+      admin:
+         client: 
+            enabled: true
+            auto-registration: true
+            url: http://localhost:10000
+         routes.endpoints: env, metrics, trace, jolokia, info, configprops
    # Kafka
    kafka:
       properties:
@@ -116,7 +139,11 @@ application:
             output: streaming.output.powerMeasurements
          replicas: 1
 
-#{1:SUM, 2:AVG}
+springdoc: 
+  show-actuator: true
+  swagger-ui.path: /swagger-ui.html
+  api-docs:
+    enabled: true
+    path: /api-docs
+    #use-management-port: true
 
-#TODO: create 4 topics for AVG, SUM etc
-# temperature -> 2 points temp1,temp2

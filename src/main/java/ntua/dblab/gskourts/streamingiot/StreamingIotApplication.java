@@ -12,11 +12,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+import de.codecentric.boot.admin.server.config.EnableAdminServer;
 import lombok.RequiredArgsConstructor;
 import ntua.dblab.gskourts.streamingiot.util.AppConstants;
 
-@SpringBootApplication
+@EnableAdminServer
 @EnableKafkaStreams
+@SpringBootApplication
 public class StreamingIotApplication {
 
   public static void main(String[] args) {

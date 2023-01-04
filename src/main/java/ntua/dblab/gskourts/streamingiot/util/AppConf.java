@@ -49,6 +49,7 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import lombok.Data;
 import lombok.Generated;
+import lombok.extern.slf4j.Slf4j;
 
 import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde;
 
@@ -73,9 +74,9 @@ import static org.apache.kafka.streams.StreamsConfig.REPLICATION_FACTOR_CONFIG;
 @EnableAspectJAutoProxy
 @Getter
 @Setter
+@Slf4j
 @Generated
 public class AppConf {
-   private static final Logger LOG = LoggerFactory.getLogger(AppConf.class);
    @Autowired
    private ApplicationContext ctx;
    @Autowired

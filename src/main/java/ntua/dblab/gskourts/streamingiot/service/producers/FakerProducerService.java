@@ -15,16 +15,17 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.datafaker.Faker;
 import ntua.dblab.gskourts.streamingiot.util.AppConf;
 import ntua.dblab.gskourts.streamingiot.util.AppConstants;
 import reactor.core.publisher.Flux;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 @Qualifier("fakerDataProducer")
 public class FakerProducerService implements DataProducerI {
-   private final Logger LOG = LoggerFactory.getLogger(FakerProducerService.class);
    private final Map<Integer, String> topicTypeMap;
    private final KafkaTemplate<Integer, Integer> kafkaTemplate;
    private final AppConf appConf;
@@ -47,7 +48,7 @@ public class FakerProducerService implements DataProducerI {
    @EventListener(ApplicationStartedEvent.class)
    public void generate() {
       if (!enabled) {
-         LOG.trace("FakerProducerService is disabled");
+         log.trace("FakerProducerService is disabled");
          return;
       }
       faker = new Faker();

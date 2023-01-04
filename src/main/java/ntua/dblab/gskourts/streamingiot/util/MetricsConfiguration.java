@@ -24,12 +24,12 @@ import io.micrometer.graphite.GraphiteMeterRegistry;
 import io.micrometer.jmx.JmxConfig;
 import io.micrometer.jmx.JmxMeterRegistry;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 
 @Configuration
 @ToString
+@Slf4j
 public class MetricsConfiguration {
-
-   private static Logger LOG = LoggerFactory.getLogger(MetricsConfiguration.class);
 
    @Value("${management.metrics.registries}")
    private String registriesCsv;
@@ -91,17 +91,17 @@ public class MetricsConfiguration {
             return new String[0]; // APP
          }
       };
-      LOG.info("graphiteConfig: Host={}, Step={}, TagsEnabled={}, config={}", graphiteConfig.host(),
+      log.info("graphiteConfig: Host={}, Step={}, TagsEnabled={}, config={}", graphiteConfig.host(),
             graphiteConfig.step(), graphiteConfig.graphiteTagsEnabled(), graphiteConfig);
       return graphiteConfig;
    }
 
    public GraphiteMeterRegistry graphiteMeterRegistry(GraphiteConfig config, Clock clock) {
-      LOG.info("graphiteMeterRegistry: Host={}, Step={}, TagsEnabled={}, config={}", config.host(), config.step(),
+      log.info("graphiteMeterRegistry: Host={}, Step={}, TagsEnabled={}, config={}", config.host(), config.step(),
             config.graphiteTagsEnabled(), config);
 
       String instanceIdModeDir = Utils.buildMetricsPath(instanceIdModes);
-      LOG.info("graphiteMeterRegistry: instanceIdModeDir={}", instanceIdModeDir);
+      log.info("graphiteMeterRegistry: instanceIdModeDir={}", instanceIdModeDir);
 
       GraphiteMeterRegistry registry = new GraphiteMeterRegistry(config, // GraphiteConfig.DEFAULT,
             Clock.SYSTEM,
@@ -109,7 +109,7 @@ public class MetricsConfiguration {
                   + instanceIdModeDir
                   + HierarchicalNameMapper.DEFAULT.toHierarchicalName(id, NamingConvention.dot));
 
-      LOG.info("Registry STARTED: registry={}, config={}", registry, registry.config());
+      log.info("Registry STARTED: registry={}, config={}", registry, registry.config());
 
       return registry;
    }
@@ -120,11 +120,16 @@ public class MetricsConfiguration {
 
    @Bean
    public MeterRegistryCustomizer<MeterRegistry> meterRegistryCustomizer() {
+      if (registriesCsv == null || registriesCsv.isEmpty() || registriesCsv.contains("*")) {
+         log.debug("No registries defined");
+         return registry -> {
+         };
+      }
       List<String> allowedMetrics = Utils.getCSVContents(allowedMetricsCsv);
 
       return registry -> {
          for (String metric : allowedMetrics) {
-            LOG.info("{} MeterRegistry: metric added={}", registry.getClass().getName(), metric);
+            log.info("{} MeterRegistry: metric added={}", registry.getClass().getName(), metric);
             registry.config().meterFilter(MeterFilter.acceptNameStartsWith(metric));
          }
 
@@ -138,7 +143,7 @@ public class MetricsConfiguration {
       CompositeMeterRegistry composite = new CompositeMeterRegistry();
 
       List<String> expectedRegistries = Utils.getCSVContents(registriesCsv);
-      LOG.info("expected_registries: {}",
+      log.info("expected_registries: {}",
             expectedRegistries);
 
       if (expectedRegistries.contains("jmx")) {
@@ -163,6 +168,6 @@ public class MetricsConfiguration {
 
    @PostConstruct
    private void init() {
-      LOG.info("START init. {}", this);
+      log.info("START init. {}", this);
    }
 }
