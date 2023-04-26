@@ -116,6 +116,11 @@ public class EmptyUtils {
    }
 
    public static String stringOrEmpty(String str, boolean trim) {
-      return (str == null) ? "" : (trim) ? str.trim() : str;
+      if (str == null)
+         return "";
+
+      if (trim)
+         return str.trim();
+      return str;
    }
 }

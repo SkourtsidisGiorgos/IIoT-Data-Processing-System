@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Kafka Topics</title>
+    <link rel="stylesheet" th:href="@{/webjars/adminlte/3.2.0/css/adminlte.min.css}" />
+    <script th:src="@{/webjars/adminlte/3.2.0/js/adminlte.min.js}"></script>
+</head>
+<body>
+<div class="container">
+    <h1 class="my-4">Kafka Topics</h1>
+    <table class="table table-bordered table-striped">
+        <thead>
+        <tr>
+            <th>Topic Name</th>
+            <th>Partition Count</th>
+            <th>Replication Factor</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="topic : ${topics}">
+            <td th:text="${topic.name}"></td>
+            <td th:text="${topic.partitions}"></td>
+            <td th:text="${topic.replicas}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

@@ -18,10 +18,6 @@ global:
         static_configs:
           - targets: ['cadvisor:8080']
 
-      - job_name: 'airpol_srb_fc'
-        static_configs:
-          - targets: ['airpol_srb_fc:10180']
-
       - job_name: 'node-exporter'
         static_configs:
           - targets: ['node-exporter:9100']

@@ -1,0 +1,17 @@
+{
+   "name": "influxdb-sink",
+   "config": {
+      "connector.class": "io.confluent.influxdb.InfluxDBSinkConnector",
+      "tasks.max": "1",
+      "topics": "streaming.input.temperatureMeasurements",
+      "influxdb.url": "http://localhost:8086",
+      "influxdb.db": "streaming_iot",
+      "influxdb.username": "admin",
+      "influxdb.password": "admin",
+      "measurement.name.format": "${topic}",
+      "connect.influx.kcql": "INSERT INTO temp10 SELECT * FROM streaming.input.temperatureMeasurements WITH TIMESTAMP time",
+      "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+      "value.converter": "org.apache.kafka.connect.storage.StringConverter",
+      "value.converter.schemas.enable": "false"
+   }
+}

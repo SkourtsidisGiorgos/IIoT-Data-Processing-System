@@ -4,35 +4,42 @@ apiVersion: 1
 datasources:
   - name: Prometheus
     type: prometheus
-    access: direct
+    access: proxy
     user: admin
     password: admin
-    url: http://localhost:9090
+    url: http://prometheus:9090
+    isDefault: true
+    basicAuth: false
+    uid: prometheus
   - name: Graphite
     type: graphite
     access: proxy
-    url: http://localhost:8080
+    url: http://graphite:8080
     jsonData:
       graphiteVersion: '1.1'
   - name: InfluxDB_v2_Flux # for flux
     type: influxdb
+    user: admin
+    password: mySecurePassword
     access: proxy
-    url: http://localhost:8086
+    url: http://influxdb2:8086
     secureJsonData:
-      token: token
+      token: jSR6OM0zJplfwrs_OCHf88rlb1ClA1v46fz8PxVOLsYrANQoixVqZrqCC9iF-QWDCVnRjaa5jtK4OwBw7-skag==
     jsonData:
       version: Flux
-      organization: organization
-      defaultBucket: bucket
+      organization: ntua
+      defaultBucket: streaming_iot
       tlsSkipVerify: true
   - name: InfluxDB_v2_InfluxQL # for ql
     type: influxdb
+    user: admin
+    password: mySecurePassword
     access: proxy
-    url: http://localhost:8086
+    url: http://influxdb2:8086
     # This database should be mapped to a bucket
-    database: site
+    database: streaming_iot
     jsonData:
       httpMode: GET
       httpHeaderName1: 'Authorization'
     secureJsonData:
-      httpHeaderValue1: 'Token <token>'
+      httpHeaderValue1: 'Token jSR6OM0zJplfwrs_OCHf88rlb1ClA1v46fz8PxVOLsYrANQoixVqZrqCC9iF-QWDCVnRjaa5jtK4OwBw7-skag=='

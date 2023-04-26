@@ -23,11 +23,11 @@
 
     <springProfile name="dev">
         <root level="info">
-            <!--<appender-ref ref="STDOUT" />-->
+            <appender-ref ref="STDOUT" />
             <appender-ref ref="SAVE-TO-FILE" />
         </root>
         <logger name="ntua.dblab.gskourts.streamingiot" additivity="false" level="trace">
-            <!--<appender-ref ref="STDOUT" />-->
+            <appender-ref ref="STDOUT" />
             <appender-ref ref="SAVE-TO-FILE" />
         </logger>
     </springProfile>

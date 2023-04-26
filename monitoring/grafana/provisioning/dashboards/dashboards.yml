@@ -6,7 +6,7 @@ apiVersion: 1
 # tells grafana where to find the pre-created dashboards
 providers:
   - name: 'default'
-    folder: 'AQFC-dashboards'
+    folder: 'NTUA-Streaming-IoT-Dashboards'
     type: 'file'
     disableDeletion: true
     editable: true

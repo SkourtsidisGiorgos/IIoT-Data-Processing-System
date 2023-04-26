@@ -4,10 +4,7 @@ import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
-import lombok.Data;
-import lombok.Generated;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import ntua.dblab.gskourts.streamingiot.util.avro.CountAndSum;
 
 import java.util.HashMap;
@@ -76,60 +73,61 @@ import static org.apache.kafka.streams.StreamsConfig.REPLICATION_FACTOR_CONFIG;
 @Setter
 @Slf4j
 @Generated
+@RequiredArgsConstructor
 public class AppConf {
-   @Autowired
-   private ApplicationContext ctx;
-   @Autowired
-   private BuildProperties buildProperties;
+   private final ApplicationContext ctx;
+   private final BuildProperties buildProperties;
 
    @Bean
    public OpenAPI openAPI() {
       return new OpenAPI()
             .info(new Info().title(String.format("%s API", buildProperties.getName()))
-                  .description("Thesis by student Giorgos Skourtsidis")
+                  .description("NTUA Thesis by student Giorgos Skourtsidis")
                   .version(buildProperties.getVersion())
-                  .license(new License().name("© 2022 by Giorgos Skourtsidis").url("https://www.ntua.gr/en/")));
+                  .license(new License().name("© 2023 by Giorgos Skourtsidis").url("https://www.ntua.gr/en/")));
    }
 
    @Value("${application.topics.measurementTopicsCount}")
-   private int measurementTopicsCount;
+   private Integer measurementTopicsCount;
    @Value("${application.topics.temperature.devicesNum}")
-   private int temperatureDevicesNum;
+   private Integer temperatureDevicesNum;
    @Value("${application.topics.temperature.replicas}")
-   private int temperatureReplicas;
+   private Integer temperatureReplicas;
    @Value("${application.topics.temperature.measurementTopicId}")
-   private int temperatureMeasurementTopicId;
+   private Integer temperatureMeasurementTopicId;
    @Value("${application.topics.temperature.name.input}")
    private String temperatureInputTopic;
    @Value("${application.topics.temperature.name.output}")
    private String temperatureOutputTopic;
    @Value("${application.topics.power.devicesNum}")
-   private int powerDevicesNum;
+   private Integer powerDevicesNum;
    @Value("${application.topics.power.replicas}")
-   private int powerReplicas;
+   private Integer powerReplicas;
    @Value("${application.topics.power.measurementTopicId}")
-   private int powerMeasurementTopicId;
+   private Integer powerMeasurementTopicId;
    @Value("${application.topics.power.name.input}")
    private String powerInputTopic;
    @Value("${application.topics.power.name.output}")
    private String powerOutputTopic;
    @Value("${application.topics.pressure.devicesNum}")
-   private int pressureDevicesNum;
+   private Integer pressureDevicesNum;
    @Value("${application.topics.pressure.replicas}")
-   private int pressureReplicas;
+   private Integer pressureReplicas;
    @Value("${application.topics.pressure.measurementTopicId}")
-   private int pressureMeasurementTopicId;
+   private Integer pressureMeasurementTopicId;
    @Value("${application.topics.pressure.name.input}")
    private String pressureInputTopic;
    @Value("${application.topics.pressure.name.output}")
    private String pressureOutputTopic;
 
    @Value("${application.producer.produceIntervalSec}")
-   private int produceIntervalSec;
+   private Integer produceIntervalSec;
 
    @Value("${spring.kafka.consumer.properties.deadletterqueue.topic.name}")
    private String deadLetterTopicName;
 
+   @Value("${spring.kafka.properties.bootstrap.servers}")
+    private String bootstrapServers;
    //@Bean
    //public CommonsRequestLoggingFilter requestLoggingFilter() {
    //   CommonsRequestLoggingFilter loggingFilter = new CommonsRequestLoggingFilter();
@@ -144,6 +142,11 @@ public class AppConf {
    private String schemaRegistryHost;
    @Value("${application.schema.registry.port}")
    private String schemaRegistryPort;
+
+   //@Value("${spring.kafka.properties.schema.registry.url}")
+   //private String schemaRegistryHost;
+   //@Value("${spring.kafka.properties.schema.registry.port}")
+   //private String schemaRegistryPort;
 
    @Bean
    public SpecificAvroSerde<CountAndSum> countAndSumSerde() {

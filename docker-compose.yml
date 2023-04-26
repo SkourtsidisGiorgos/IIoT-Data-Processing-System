@@ -10,22 +10,22 @@ volumes:
 
 services:
 
-  #streaming_iot:
-  #    build: 
-  #      context: .
-  #      #args:
-  #      #  A: B
-  #    image: ntua/streaming_iot
-  #    container_name: streaming_iot
-  #    # depends_on:
-  #    #   - 
-  #    expose:
-  #      - 10000
-  #    ports:
-  #      - 10000:10000
-  #    volumes:
-  #      - ./config:/config
-  #      - ./logs:/logs
+#  streaming_iot:
+#      build:
+#        context: .
+#        #args:
+#        #  A: B
+#      image: ntua/streaming_iot
+#      container_name: streaming_iot
+#      # depends_on:
+#      #   -
+#      expose:
+#        - 10000
+#      ports:
+#        - 10000:10000
+#      volumes:
+#        - ./config:/config
+#        - ./logs:/logs
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.3.0
@@ -106,7 +106,7 @@ services:
       CLASSPATH: /usr/share/java/monitoring-interceptors/monitoring-interceptors-7.3.0.jar
       CONNECT_PRODUCER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringProducerInterceptor"
       CONNECT_CONSUMER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringConsumerInterceptor"
-      CONNECT_PLUGIN_PATH: "/usr/share/java,/usr/share/confluent-hub-components"
+      CONNECT_PLUGIN_PATH: "/usr/share/java,/usr/share/confluent-hub-components,/usr/local/share/kafka-connect-influxdb"
       CONNECT_LOG4J_LOGGERS: org.apache.zookeeper=ERROR,org.I0Itec.zkclient=ERROR,org.reflections=ERROR
     #command:
     #- bash
@@ -225,6 +225,8 @@ services:
       environment:
         - GF_SECURITY_ADMIN_PASSWORD=admin
         - GF_USERS_ALLOW_SIGN_UP=false
+        - NO_PROXY=localhost,prometheus,grafana,127.0.0.0/8,
+        - no_proxy=localhost,prometheus,grafana,127.0.0.0/8,
         # - GF_SERVER_DOMAIN=myrul.com
         # - GF_SMTP_ENABLED=true
         # - GF_SMTP_HOST=smtp.gmail.com:587
@@ -255,49 +257,82 @@ services:
         - 8080:8080
       #network_mode: host
 
-  #prometheus:
-  #  image: prom/prometheus
-  #  user: root
-  #  container_name: prometheus
-  #  volumes:
-  #  # - ./monitoring/prometheus:/etc/prometheus
-  #  - ./monitoring/prometheus/prometheus_dev.yml:/etc/prometheus/prometheus.yml
-  #  # - ./monitoring/prometheus/rules.yml:/etc/prometheus/rules.yml
-  #  - prometheus_data:/prometheus
-  #  command:
-  #    - '--config.file=/etc/prometheus/prometheus.yml'
-  #    # - '-alertmanager.url=http://alertmanager:9093'
-  #  expose:
-  #    - 9090
-  #  ports:
-  #    - 9090:9090
-  #    #- 10000:10000
-  #  depends_on:
-  #    - cadvisor
-  #  #network_mode: host
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    restart: unless-stopped
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    expose:
+      - 9100
+
+  prometheus:
+    image: prom/prometheus
+    user: root
+    container_name: prometheus
+    volumes:
+    # - ./monitoring/prometheus:/etc/prometheus
+    - ./monitoring/prometheus/prometheus_dev.yml:/etc/prometheus/prometheus.yml
+    # - ./monitoring/prometheus/rules.yml:/etc/prometheus/rules.yml
+    - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+      # - '-alertmanager.url=http://alertmanager:9093'
+    expose:
+      - 9090
+    ports:
+      - 9090:9090
+      #- 10000:10000
+    depends_on:
+      - cadvisor
+    links:
+      - cadvisor:cadvisor
+#      - alertmanager:alertmanager
+    #network_mode: host
 
   redis:
     image: 'bitnami/redis:latest'
     container_name: redis
     environment:
-      - ALLOW_EMPTY_PASSWORD=yes
+      ALLOW_EMPTY_PASSWORD: yes
     ports:
       - '6379:6379'
     volumes: 
       - redis_data:/data
     #network_mode: host
 
-#  influxdb:
-#    image: influxdb:latest
-#    container_name: influxdb2
-#    volumes:
-#      - /mnt/influxdb/data:/var/lib/influxdb2:rw
-##    env_file:
-##      - .env
-##    entrypoint: ["./entrypoint.sh"]
-#    ports:
-#      - 8086:8086
-#    restart: unless-stopped
+  influxdb:
+    image: influxdb:latest
+    container_name: influxdb2
+    volumes:
+      - ./influxdb/data:/var/lib/influxdb2:rw
+      - ./config/kafka-connect-influxdb:/usr/local/share/kafka-connect-influxdb
+    #    env_file:
+#      - .env
+#    entrypoint: ["./entrypoint.sh"]
+    ports:
+      - 8086:8086
+    environment:
+      INFLUXDB_DB: streaming_iot
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME: admin
+      DOCKER_INFLUXDB_INIT_PASSWORD: mySecurePassword
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: jSR6OM0zJplfwrs_OCHf88rlb1ClA1v46fz8PxVOLsYrANQoixVqZrqCC9iF-QWDCVnRjaa5jtK4OwBw7-skag==
+      DOCKER_INFLUXDB_INIT_ORG: ntua
+      DOCKER_INFLUXDB_INIT_BUCKET: streaming_iot
+      DOCKER_INFLUXDB_INIT_RETENTION: 1w
+    restart: unless-stopped
 
 #  telegraf:
 #    image: telegraf:latest

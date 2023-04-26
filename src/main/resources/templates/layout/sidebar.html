@@ -1,0 +1,65 @@
+<body class="hold-transition skin-red sidebar-mini " xmlns:th="http://www.w3.org/1999/xhtml">
+  <div class="wrapper">
+  	<aside class="main-sidebar sidebar-dark-primary elevation-4">
+  	  <div class="sidebar" th:fragment="sidebar(activeTab)" style="overflow:hidden !important">
+	    <!-- Sidebar Menu -->
+	    <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column nav-child-indent "
+            data-widget="treeview" role="menu" data-accordion="true" id="sidebar-menu">
+          <!-- Brand Logo -->
+          <a class="nav-link icon-link" th:href="@{/overview}">
+<!--            <img src="https://iili.io/HvmotPR.jpg" alt="1554422573347?e=2147483647&v=beta&t=QeHV6hjye5yTxRbSa46HXqdEZ4NHjptzX fwjd cheA" border="0" class="sidebar-logo pt-1 pb-2 " style="height: 9em "/>-->
+            <a href="https://freeimage.host/"><img src="https://iili.io/HvmuT7V.png" alt="favicon3" border="0" class="sidebar-logo pt-1 pb-2 " style="height: 9em "/></a>
+<!--            <img th:src="@{https://cdn-icons-png.flaticon.com/512/6119/6119533.png}" class="sidebar-logo pt-1 pb-2 " style="height: 3.9em " aria-hidden="true">-->
+          </a>
+<!--       some empty lines-->
+            <br>
+            <br>
+          <a href="/overview" class="brand-link ml-2 pt-0">
+            <span class="brand-text font-weight-light " th:text="'Streaming IoT'"></span>
+          </a>
+          <li class="nav-item">
+            <a th:href="@{/overview}" class="nav-link" th:classappend="${activeTab == 'overview'} ? 'active': null">
+              <i class="nav-icon fas fa-tachometer-alt pt-2 pb-1"></i>
+              <span th:text="Overview"></span>
+            </a>
+          </li>
+          <li class="nav-header" th:text="'Live Data'"></li>
+            <li class="nav-item">
+                <a th:href="@{/data/raw}" class="nav-link" th:classappend="${activeTab == 'policies'} ? 'active': null" id="policies-href">
+                    <i class="fas fa-clipboard-check nav-icon"></i>
+                    <span th:text="'Raw data'"></span>
+                </a>
+            </li>
+          <li class="nav-item">
+            <a th:href="@{/data/daily}" class="nav-link" th:classappend="${activeTab == 'policies'} ? 'active': null" id="daily-href">
+              <i class="fas fa-clipboard-check nav-icon"></i>
+              <span th:text="'Daily Info'"></span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a th:href="@{/data/geographical}" class="nav-link" th:classappend="${activeTab == 'strategies'} ? 'active': null" id="geographical-href">
+              <i class="fas fa-democrat nav-icon"></i>
+              <span th:text="'Geographical Analysis'"></span>
+            </a>
+          </li>
+            <li class="nav-item">
+                <a th:href="@{/data/problematic}" class="nav-link" th:classappend="${activeTab == 'strategies'} ? 'active': null" id="problematic-href">
+                    <i class="fas fa-democrat nav-icon"></i>
+                    <span th:text="'Problematic Sensors'"></span>
+                </a>
+            </li>
+          <li class="nav-header" th:text="Info"></li>
+          <li class="nav-item">
+            <a th:href="@{/about}" class="nav-link" th:classappend="${activeTab == 'about'} ? 'active': null" id="about-href">
+              <i class="fas fa-search nav-icon"></i>
+              <span th:text="About"></span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+      </div>
+    <!-- /.sidebar -->
+  	</aside>
+  </div>
+</body>

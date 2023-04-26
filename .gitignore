@@ -36,4 +36,9 @@ build/
 # Project Specific #
 test.log
 logs
+influxdb
+virtual_modbus/ModbusPal.jar
+old-commits*
+streaming-iot.pid
+streaming-iot.port
 src/main/java/ntua/dblab/gskourts/streamingiot/util/avro/CountAndSum.java

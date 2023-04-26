@@ -1,0 +1,61 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head>
+  <title> Retention </title>
+  <!-- <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback"> -->
+  <link rel="stylesheet" th:href="@{/css/sourcesanspro.css}" />
+  <link rel="stylesheet" th:href="@{/webjars/AdminLTE/plugins/fontawesome-free/css/all.min.css}" />
+  <link rel="stylesheet" th:href="@{/webjars/AdminLTE/dist/css/adminlte.min.css}" />
+  <script th:src="@{/webjars/AdminLTE/plugins/jquery/jquery.min.js}"></script>
+  <script th:src="@{/webjars/AdminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+  <script th:src="@{/webjars/AdminLTE/dist/js/adminlte.js}"></script>
+</head>
+
+<body class="sidebar-mini layout-fixed">
+
+  <!-- Navbar container -->
+  <th:block layout:fragment="navbar">
+    <div th:replace="~{layout/navbar}"></div>
+  </th:block>
+
+  <!-- Main Sidebar Container  -->
+  <aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <div class="sidebar">
+      <section layout:fragment="sidebar" class="sidebar" th:replace="~{layout/sidebar :: sidebar('')}"></section>
+    </div>
+  </aside>
+
+  <!-- Main Body -->
+  <div class="content-wrapper">
+    <section class="content-header">
+      <div class="container-fluid">
+        <div>
+          <!-- Below will be replaced by your header -->
+          <h1 layout:fragment="page-header"></h1>
+        </div>
+        <div class="row mb-2">
+          <div class="col-sm-12">
+            <!-- Breadcrumb replace below -->
+            <ol class="breadcrumb" layout:fragment="breadcrumb"></ol>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="content" layout:fragment="content">
+      <!-- Your Page Content Here -->
+    </section>
+  </div>
+  <!-- Main Footer -->
+  <footer class="main-footer">
+    <strong>Copyright &copy; 2022 - 2023
+<!--      <b th:text="${#dates.year(#dates.createNow())}">2023</b>-->
+      <a href="https://github.com/SkourtsidisGiorgos" target="_blank">Giorgos Skourtsidis</a>
+    </strong>
+    All rights reserved.
+  </footer>
+
+  <th:block layout:fragment="scripts"></th:block>
+</body>
+
+</html>

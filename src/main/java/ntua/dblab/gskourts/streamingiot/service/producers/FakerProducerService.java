@@ -3,12 +3,12 @@ package ntua.dblab.gskourts.streamingiot.service.producers;
 import java.time.Duration;
 import java.util.Map;
 
+import ntua.dblab.gskourts.streamingiot.model.ActiveStatusEnum;
 import org.javatuples.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -18,8 +18,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.datafaker.Faker;
 import ntua.dblab.gskourts.streamingiot.util.AppConf;
-import ntua.dblab.gskourts.streamingiot.util.AppConstants;
 import reactor.core.publisher.Flux;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -29,10 +29,14 @@ public class FakerProducerService implements DataProducerI {
    private final Map<Integer, String> topicTypeMap;
    private final KafkaTemplate<Integer, Integer> kafkaTemplate;
    private final AppConf appConf;
-   @Value("${application.producer.produceIntervalSec}")
-   private int produceIntervalSec;
+
+   @Autowired
+   @Qualifier("activeDevicesMap")
+   private ConcurrentHashMap<String, ActiveStatusEnum> activeDevicesMap;
+
    @Value("${application.producer.fakeProducer.enabled}")
    private boolean enabled;
+   Integer currKey;
 
    Faker faker;
 
@@ -46,6 +50,7 @@ public class FakerProducerService implements DataProducerI {
 
    @Override
    @EventListener(ApplicationStartedEvent.class)
+   @ConditionalOnProperty(name="web-server-only", havingValue="false")
    public void generate() {
       if (!enabled) {
          log.trace("FakerProducerService is disabled");
@@ -58,23 +63,33 @@ public class FakerProducerService implements DataProducerI {
                return new Pair<>(topicId, getValueByType(topicId));
             })
             .subscribe(pair -> {
-               kafkaTemplate.send(topicTypeMap.get(pair.getValue0()), getPartition(pair.getValue0()), pair.getValue1());
+               String topic = topicTypeMap.get(pair.getValue0());
+               String measurementCategory = topic.replace("streaming.input.", "").replace("Measurements", "");
+               Integer deviceIdInt = getKey(pair.getValue0());
+               String device = String.format("%s-%s", measurementCategory, getKey(pair.getValue0()));
+               //               log.trace("Sending message to topic: {}, device: {}, value: {}", topic, device, pair.getValue1());
+               if (activeDevicesMap.get(device) == ActiveStatusEnum.INACTIVE) {
+                  log.trace("Device {} is inactive, skipping message", device);
+                  return;
+               }
+
+               kafkaTemplate.send(topic, deviceIdInt, pair.getValue1());
             });
    }
 
    private Integer getValueByType(int type) {
-      if (type == 0) {
+      if (type == 0) { // temperature
          return Integer.parseInt(faker.weather().temperatureCelsius().replace("°C", ""));
-      } else if (type == 1) {
+      } else if (type == 1) { // pressure
          return faker.random().nextInt(3, 222);
-      } else if (type == 2) {
+      } else if (type == 2) { // power
          return faker.random().nextInt(2500, 6900);
       } else {
          throw new IllegalArgumentException(String.format("Measurement type %s not supported", type));
       }
    }
 
-   private Integer getPartition(int topicId) {
+   private Integer getKey(Integer topicId) {
       if (topicId == 0) {
          return faker.random().nextInt(0, appConf.getTemperatureDevicesNum());
       } else if (topicId == 1) {

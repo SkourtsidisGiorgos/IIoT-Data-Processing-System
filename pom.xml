@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.7.5</version>
+		<version>2.7.11</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>ntua.dblab.gskourts</groupId>
@@ -17,11 +17,12 @@
 		<java.version>17</java.version>
    	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-		<spring-boot-admin.version>2.7.4</spring-boot-admin.version>
+		<spring-boot-admin.version>2.7.10</spring-boot-admin.version>
 		<spring-cloud.version>2021.0.5</spring-cloud.version>
     	<version.springdoc-openapi-ui>1.6.6</version.springdoc-openapi-ui>
     	<version.hive.jdbc>2.1.1-cdh6.3.4</version.hive.jdbc>
     	<version.impala.jdbc>2.6.27</version.impala.jdbc>
+		<version.influxdb>6.8.0</version.influxdb>
     	<version.hadoop>3.0.0-cdh6.3.4</version.hadoop>
     	<version.mapstruct>1.4.2.Final</version.mapstruct>
     	<version.okhttp>4.10.0</version.okhttp>
@@ -37,6 +38,23 @@
 		<artifactId>noise</artifactId>
 		<version>2.0.0-SNAPSHOT</version>
 		</dependency>-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-rest</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-rest-hal-explorer</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>runtime</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>org.apache.avro</groupId>
@@ -53,7 +71,7 @@
 		<dependency>
 			<groupId>org.apache.kafka</groupId>
 			<artifactId>kafka-streams-test-utils</artifactId>
-			<version>3.3.1</version>
+			<version>3.4.0</version>
 		</dependency>
 
 		<dependency>
@@ -94,7 +112,7 @@
 		<dependency>
 			<groupId>net.datafaker</groupId>
 			<artifactId>datafaker</artifactId>
-			<version>1.6.0</version>
+			<version>1.8.1</version>
 		</dependency>
 
 		<!--<dependency>
@@ -122,18 +140,23 @@
       	<artifactId>spring-context-support</artifactId>
       	<!-- <version>${version.springboot.context}</version> -->
     </dependency>
-		<!--<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jdbc</artifactId>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.boot</groupId>-->
+<!--			<artifactId>spring-boot-starter-data-jdbc</artifactId>-->
+<!--		</dependency>-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-redis</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-jdbc</artifactId>
-		</dependency>-->
+			<groupId>redis.clients</groupId>
+			<artifactId>jedis</artifactId>
+			<version>4.3.2</version>
+		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.boot</groupId>-->
+<!--			<artifactId>spring-boot-starter-jdbc</artifactId>-->
+<!--		</dependency>-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-webflux</artifactId>
@@ -154,6 +177,16 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-stream-binder-kafka</artifactId>
 		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>io.springfox</groupId>-->
+<!--			<artifactId>springfox-boot-starter</artifactId>-->
+<!--			<version>3.0.0</version>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>io.springfox</groupId>-->
+<!--			<artifactId>springfox-swagger2</artifactId>-->
+<!--			<version>3.0.0</version>-->
+<!--		</dependency>-->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-stream-binder-kafka-streams</artifactId>
@@ -188,6 +221,41 @@
 			<groupId>io.micrometer</groupId>
 			<artifactId>micrometer-registry-graphite</artifactId>
 			<!--<scope>runtime</scope>-->
+		</dependency>
+		<dependency>
+			<groupId>com.influxdb</groupId>
+			<artifactId>influxdb-client-java</artifactId>
+			<version>${version.influxdb}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>webjars-locator</artifactId>
+			<version>0.46</version>
+		</dependency>
+		<!-- Webjars for AdminLTE3 -->
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>AdminLTE</artifactId>
+			<version>3.2.0</version>
+		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.webjars</groupId>-->
+<!--			<artifactId>jquery</artifactId>-->
+<!--			<version>3.6.4</version>-->
+<!--		</dependency>-->
+
+<!--		<dependency>-->
+<!--			<groupId>org.webjars</groupId>-->
+<!--			<artifactId>bootstrap</artifactId>-->
+<!--			<version>5.2.3</version>-->
+<!--		</dependency>-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>nz.net.ultraq.thymeleaf</groupId>
+			<artifactId>thymeleaf-layout-dialect</artifactId>
 		</dependency>
 		<!--<dependency>
 			<groupId>io.micrometer</groupId>
@@ -313,18 +381,5 @@
         <url>https://repo1.maven.org/maven2/</url>
     </repository>
 	</repositories>
-
-  <distributionManagement>
-    <repository>
-      <id>nexus</id>
-      <name>BigData Releases</name>
-      <url>https://packreg.intracomtel.com/repository/bigdata</url>
-    </repository>
-    <snapshotRepository>
-      <id>nexus</id>
-      <name>BigData Snapshots</name>
-      <url>https://packreg.intracomtel.com/repository/bigdata-snapshots</url>
-    </snapshotRepository>
-  </distributionManagement>
 
 </project>
