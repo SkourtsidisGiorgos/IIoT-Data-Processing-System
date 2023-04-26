@@ -89,14 +89,11 @@
 			<artifactId>plc4j-driver-modbus</artifactId>
 			<version>0.10.0</version>
 		</dependency>
-
-
 		<dependency>
 			<groupId>org.apache.plc4x</groupId>
 			<artifactId>plc4j-api</artifactId>
 			<version>0.10.0</version>
 		</dependency>
-
 
 		<dependency>
 			<groupId>org.javatuples</groupId>

@@ -128,7 +128,7 @@ application:
       port: 8081
    modbusPal:
       host: localhost
-      port: 10333
+      port: 5020
    producer:
       produceIntervalSec: 1
       fakeProducer:

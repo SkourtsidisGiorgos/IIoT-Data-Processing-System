@@ -199,7 +199,7 @@ services:
       - broker
       - schema-registry
     ports:
-      - 8082:8082
+      - "8082:8082"
     hostname: rest-proxy
     container_name: rest-proxy
     environment:
@@ -207,6 +207,14 @@ services:
       KAFKA_REST_BOOTSTRAP_SERVERS: 'broker:29092'
       KAFKA_REST_LISTENERS: "http://0.0.0.0:8082"
       KAFKA_REST_SCHEMA_REGISTRY_URL: 'http://schema-registry:8081'
+
+#  modbus-server:
+#    image: ghcr.io/pymodbus-dev/pymodbus:dev
+#    ports:
+#      - "5020:5020"
+#    hostname: modbus-server
+#    container_name: modbus-server
+##    command: "bash -c 'python -m pymodbus.server.asyncio --port 1502 --no-block --modbus-protocol-binary --modbus-protocol-rtu --modbus-protocol-ascii'"
 
   grafana:
       image: grafana/grafana
