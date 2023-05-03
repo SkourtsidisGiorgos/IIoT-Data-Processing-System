@@ -25,6 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequiredArgsConstructor
 @Service
 @Qualifier("fakerDataProducer")
+@ConditionalOnProperty(name="application.producer.fakerProducer.enabled", havingValue="true")
 public class FakerProducerService implements DataProducerI {
    private final Map<Integer, String> topicTypeMap;
    private final KafkaTemplate<Integer, Integer> kafkaTemplate;
@@ -50,7 +51,8 @@ public class FakerProducerService implements DataProducerI {
 
    @Override
    @EventListener(ApplicationStartedEvent.class)
-   @ConditionalOnProperty(name="web-server-only", havingValue="false")
+   @ConditionalOnProperty(name="application.producer.fakerProducer.enabled", havingValue="true")
+//   @ConditionalOnProperty(name="web-server-only", havingValue="false")
    public void generate() {
       if (!enabled) {
          log.trace("FakerProducerService is disabled");

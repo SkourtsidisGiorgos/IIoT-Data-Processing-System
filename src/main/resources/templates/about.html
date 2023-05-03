@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html th:lang="__${langActive}__" lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/layout}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>About</title>
+
+    <!-- AdminLTE 3 styles -->
+    <link rel="stylesheet" th:href="@{/webjars/AdminLTE/3.2.0/plugins/select2/css/select2.min.css}" />
+    <link rel="stylesheet" th:href="@{/webjars/AdminLTE/3.2.0/dist/css/adminlte.min.css}" />
+    <link rel="stylesheet" th:href="@{/webjars/AdminLTE/3.2.0/plugins/bootstrap4-duallistbox/bootstrap-duallistbox.min.css}" />
+    <link rel="stylesheet" th:href="@{/webjars/AdminLTE/3.2.0/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}" />
+    <link rel="stylesheet" th:href="@{/webjars/AdminLTE/3.2.0/plugins/daterangepicker/daterangepicker.css}" />
+    <link rel="stylesheet" th:href="@{/webjars/AdminLTE/3.2.0/plugins/summernote/summernote-bs4.min.css}" />
+    <link rel="stylesheet" th:href="@{/webjars/AdminLTE/3.2.0/plugins/icheck-bootstrap/icheck-bootstrap.min.css}" />
+    <link rel="stylesheet" th:href="@{/webjars/AdminLTE/3.2.0/plugins/fontawesome-free/css/all.min.css}" />
+    <link rel="stylesheet" th:href="@{/webjars/AdminLTE/3.2.0/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css}" />
+    <link rel="stylesheet" th:href="@{/webjars/AdminLTE/3.2.0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}" />
+    <link rel="stylesheet" th:href="@{/webjars/AdminLTE/3.2.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}" />
+    <link rel="stylesheet" th:href="@{/webjars/AdminLTE/3.2.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}" />
+    <link rel="stylesheet" th:href="@{/webjars/AdminLTE/3.2.0/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css}" />
+    <link rel="stylesheet" th:href="@{/webjars/AdminLTE/3.2.0/plugins/toastr/toastr.min.css}" />
+    <link rel="stylesheet" th:href="@{/webjars/AdminLTE/3.2.0/plugins/ekko-lightbox/ekko-lightbox.css}" />
+    <link rel="stylesheet" th:href="@{/webjars/AdminLTE/3.2.0/plugins/ekko-lightbox/ekko-lightbox.css}" />
+
+    <!-- jQuery and Bootstrap Bundle (includes Popper) -->
+    <script th:src="@{/webjars/jquery/3.6.0/jquery.min.js}"></script>
+    <script th:src="@{/webjars/bootstrap/5.1.0/js/bootstrap.bundle.min.js}"></script>
+</head>
+<body class="hold-transition sidebar-mini">
+
+<ol layout:fragment="breadcrumb">
+    <li class="breadcrumb-item"><a th:href="@{/home}" th:text="Home"></a></li>
+    <li class="breadcrumb-item active" th:text="Devices"></li>
+</ol>
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card card-primary">
+                            <div class="card-header">
+                                <h3 class="card-title">About Us</h3>
+                            </div>
+                            <div class="card-body">
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris aliquet, ligula id facilisis ullamcorper, augue libero venenatis lacus, ut porttitor odio nibh sit amet odio. Sed ut nunc at velit eleifend aliquet. Donec imperdiet ipsum ac est maximus, a aliquet turpis viverra.
+                                </p>
+                                <p>
+                                    Integer vel sapien sit amet sapien sodales tristique. Nullam fringilla bibendum ullamcorper. Pellentesque at felis ut lacus bibendum posuere. Praesent id libero eros. Nunc accumsan dolor in velit posuere, non efficitur est fermentum.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+
+    <!-- Footer -->
+<!--    <footer class="main-footer">-->
+<!--        <div class="float-right d-none d-sm-inline">-->
+<!--            Your App Name-->
+<!--        </div>-->
+<!--        <strong>&copy; 2023 Your Company. All rights reserved.</strong>-->
+<!--    </footer>-->
+</div>
+<!-- ./wrapper -->
+</body>
+
+<th:block layout:fragment="scripts">
+    <script th:src="@{/webjars/AdminLTE/plugins/datatables/jquery.dataTables.min.js}"></script>
+    <script th:src="@{/webjars/AdminLTE/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+    <script th:src="@{/webjars/AdminLTE/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+    <script th:src="@{/webjars/AdminLTE/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+    <script th:src="@{/webjars/AdminLTE/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+    <script th:src="@{/webjars/AdminLTE/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+    <script th:src="@{/webjars/AdminLTE/plugins/jszip/jszip.min.js}"></script>
+    <script th:src="@{/webjars/AdminLTE/plugins/pdfmake/pdfmake.min.js}"></script>
+    <script th:src="@{/webjars/AdminLTE/plugins/pdfmake/vfs_fonts.js}"></script>
+    <script th:src="@{/webjars/AdminLTE/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+    <script th:src="@{/webjars/AdminLTE/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+    <script th:src="@{/webjars/AdminLTE/plugins/datatables-buttons/js/buttons.colVis.min.js}"></script>
+    <script th:src="@{/webjars/AdminLTE/3.2.0/plugins/select2/js/select2.min.js}" defer="defer"></script>
+    <!--   <script th:src="@{/js/bootstrap-switch.min.js}"></script>-->
+</th:block>
+</html>

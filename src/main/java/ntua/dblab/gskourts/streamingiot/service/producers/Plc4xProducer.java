@@ -1,143 +1,160 @@
-//package ntua.dblab.gskourts.streamingiot.service.producers;
+package ntua.dblab.gskourts.streamingiot.service.producers;
 
-//import java.time.Duration;
-//import java.util.Map;
-//import java.util.concurrent.ExecutionException;
+import java.time.Duration;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
 
-//import org.apache.plc4x.java.PlcDriverManager;
-//import org.apache.plc4x.java.api.PlcConnection;
-//import org.apache.plc4x.java.api.messages.PlcReadRequest;
-//import org.apache.plc4x.java.api.messages.PlcReadResponse;
-//import org.apache.plc4x.java.api.types.PlcResponseCode;
-//import org.javatuples.Pair;
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.beans.factory.annotation.Qualifier;
-//import org.springframework.beans.factory.annotation.Value;
-//import org.springframework.boot.context.event.ApplicationStartedEvent;
-//import org.springframework.context.event.EventListener;
-//import org.springframework.kafka.core.KafkaTemplate;
-//import org.springframework.stereotype.Service;
+import ntua.dblab.gskourts.streamingiot.model.ActiveStatusEnum;
+import org.apache.plc4x.java.PlcDriverManager;
+import org.apache.plc4x.java.api.PlcConnection;
+import org.apache.plc4x.java.api.messages.PlcReadRequest;
+import org.apache.plc4x.java.api.messages.PlcReadResponse;
+import org.apache.plc4x.java.api.types.PlcResponseCode;
+import org.javatuples.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.context.event.EventListener;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.stereotype.Service;
 
-//import lombok.RequiredArgsConstructor;
-//import ntua.dblab.gskourts.streamingiot.util.AppConf;
-//import ntua.dblab.gskourts.streamingiot.util.AppConstants;
-//import reactor.core.publisher.Flux;
+import lombok.RequiredArgsConstructor;
+import ntua.dblab.gskourts.streamingiot.util.AppConf;
+import ntua.dblab.gskourts.streamingiot.util.AppConstants;
+import reactor.core.publisher.Flux;
+import scala.App;
 
-//@RequiredArgsConstructor
-//@Service
-//@Qualifier("plc4xProducer")
-//public class Plc4xProducer implements DataProducerI {
-//   private final Logger LOG = LoggerFactory.getLogger(Plc4xProducer.class);
-//   private final KafkaTemplate<Integer, Integer> kafkaTemplate;
-//   @Autowired
-//   @Qualifier("topicTypeMap")
-//   private Map<Integer, String> topicTypeMap;
-//   @Value("${application.producer.produceIntervalSec}")
-//   private int produceIntervalSec;
-//   @Value("${application.producer.plc4xProducer.enabled}")
-//   private boolean enabled;
+@Service
+@Qualifier("plc4xProducer")
+@ConditionalOnProperty(name="application.producer.plc4xProducer.enabled", havingValue="true")
+public class Plc4xProducer {
+   private final Logger LOG = LoggerFactory.getLogger(Plc4xProducer.class);
+   private final KafkaTemplate<Integer, Integer> kafkaTemplate;
+   @Autowired
+   @Qualifier("topicTypeMap")
+   private Map<Integer, String> topicTypeMap;
 
-//   @Value("${application.modbusPal.host}")
-//   private String modbusPalHost;
-//   @Value("${application.modbusPal.port}")
-//   private int modbusPalPort;
+   @Autowired
+   @Qualifier("activeDevicesMap")
+   private ConcurrentHashMap<String, ActiveStatusEnum> activeDevicesMap;
 
-//   private AppConf appConf;
+   @Value("${application.producer.produceIntervalSec}")
+   private int produceIntervalSec;
+   @Value("${application.producer.plc4xProducer.enabled}")
+   private boolean enabled;
 
-//   public Plc4xProducer(AppConf appConf, KafkaTemplate<Integer, Integer> kafkaTemplate) {
-//      this.appConf = appConf;
-//      this.kafkaTemplate = kafkaTemplate;
-//   }
+   @Value("${application.modbusPal.host}")
+   private String modbusPalHost;
+   @Value("${application.modbusPal.port}")
+   private int modbusPalPort;
 
-//   @Override
-//   @EventListener(ApplicationStartedEvent.class)
-//   public void generate() {
-//      if (!enabled) {
-//         LOG.info("Plc4xProducer is disabled");
-//         return;
-//      }
-//      String connectionString = String.format("modbus-tcp://%s:%d", modbusPalHost, modbusPalPort);
-//      LOG.trace("Connecting to {}", connectionString);
+   private AppConf appConf;
 
-//      try (PlcConnection plcConnection = new PlcDriverManager().getConnection(connectionString)) {
-//         if (!plcConnection.isConnected()) {
-//            LOG.error("Could not connect to {}", connectionString);
-//            return;
-//         }
-//         if (!canReadVirtualModbus(plcConnection)) {
-//            return;
-//         }
+   public Plc4xProducer(AppConf appConf, KafkaTemplate<Integer, Integer> kafkaTemplate) {
+      this.appConf = appConf;
+      this.kafkaTemplate = kafkaTemplate;
+   }
 
-//         Flux.interval(Duration.ofSeconds(produceIntervalSec))
-//               .map(i -> {
-//                  PlcReadResponse response = readModbus(plcConnection);
-//                  processPlcResponse(response);
-//                  return new Pair<Integer, Integer>(1, response.getInteger("value-3"));
-//               })
-//               .subscribe(pair -> {
-//                  kafkaTemplate.send(appConf, pair.getValue0(), pair.getValue1());
-//                  LOG.info("Sent: <{},{}>", pair.getValue0(), pair.getValue1());
-//               });
+   @EventListener(ApplicationStartedEvent.class)
+   private PlcReadResponse readModbus() {
+       if (!enabled) {
+           LOG.info("Plc4xProducer is disabled");
+           return null;
+       }
+       String connectionString = "modbus-tcp://" + modbusPalHost + ":" + modbusPalPort;
+       try (PlcConnection plcConnection = new PlcDriverManager().getConnection(connectionString)) {
+           // Check if this connection support reading of data.
+           canReadVirtualModbus(plcConnection);
 
-//      } catch (Exception e) {
-//         LOG.error("Error connecting to ModbusPal", e);
-//      }
+           LOG.info("Create a new read request");
+           // Create a new read request:
+           // - Give the single item requested the alias name "value"
+           PlcReadRequest.Builder builder = plcConnection.readRequestBuilder();
+//            builder.addItem("value-1", "coil:1");
+//            builder.addItem("value-2", "coil:3[4]");
+//            builder.addItem("value-3", "holding-register:1");
+//            builder.addItem("value-4", "holding-register:3[4]");
 
-//   }
+           builder.addItem("pressure-1", "holding-register:2");
+           builder.addItem("pressure-2", "holding-register:3");
+           builder.addItem("pressure-3", "holding-register:4");
+           builder.addItem("power-1", "holding-register:5");
+           builder.addItem("power-2", "holding-register:6");
+           builder.addItem("power-3", "holding-register:7");
+           builder.addItem("temperature-1", "holding-register:8");
+           builder.addItem("temperature-2", "holding-register:9");
+           builder.addItem("temperature-3", "holding-register:10");
+           builder.addItem("temperature-4", "holding-register:11");
 
-//   private PlcReadResponse readModbus(PlcConnection plcConnection) {
-//      // Create a new read request:
-//      // - Give the single item requested the alias name "value"
-//      PlcReadRequest.Builder builder = plcConnection.readRequestBuilder();
-//      //builder.addItem("value-1", "coil:1");
-//      //builder.addItem("value-2", "coil:3[4]");
-//      builder.addItem("value-3", "holding-register:1");
-//      //builder.addItem("value-4", "holding-register:3[4]");
-//      PlcReadRequest readRequest = builder.build();
-//      PlcReadResponse response;
-//      try {
-//         LOG.debug("Reading registers from ModbusPal");
-//         response = readRequest.execute().get();
-//      } catch (InterruptedException | ExecutionException e) {
-//         LOG.error("", e);
-//         return null;
-//      }
-//      return response;
+           PlcReadRequest readRequest = builder.build();
+//            logger.info("Request - " + readRequest);
 
-//   }
+           while (true){
+               Thread.sleep(1000);
+               PlcReadResponse response = readRequest.execute().get();
+//                logger.info("Response - " + response);
+               processPlcResponse(response);
+           }
+       } catch (Exception ex) {
+           throw new RuntimeException(ex);
+       }
+   }
 
-//   private void processPlcResponse(PlcReadResponse response) {
-//      for (String fieldName : response.getFieldNames()) {
-//         if (response.getResponseCode(fieldName) == PlcResponseCode.OK) {
-//            int numValues = response.getNumberOfValues(fieldName);
-//            // If it's just one element, output just one single line.
-//            if (numValues == 1) {
-//               LOG.info("Value[" + fieldName + "]: " + response.getObject(fieldName));
-//            }
-//            // If it's more than one element, output each in a single row.
-//            else {
-//               LOG.info("Value[" + fieldName + "]:");
-//               for (int i = 0; i < numValues; i++) {
-//                  LOG.info(" - " + response.getObject(fieldName, i));
-//               }
-//            }
-//         }
-//         // Something went wrong, to output an error message instead.
-//         else {
-//            LOG.error("Error[" + fieldName + "]: " + response.getResponseCode(fieldName).name());
-//         }
-//      }
+   private void processPlcResponse(PlcReadResponse response) {
+      for (String fieldName : response.getFieldNames()) {
+         if (response.getResponseCode(fieldName) == PlcResponseCode.OK) {
+            int numValues = response.getNumberOfValues(fieldName);
+            // If it's just one element, output just one single line.
+            if (numValues == 1) {
+                Integer key = Integer.parseInt(fieldName.split("-")[1]);
+                Integer value = ((Short) response.getObject(fieldName)).intValue();
+//                LOG.info("Value[" + fieldName + "]: " + value);
+//              if name contains pressure, power or temperature
+                if (fieldName.contains("pressure")) {
+                    if (activeDevicesMap.get(AppConstants.PRESSURE_DEVICE_PREFIX + key) == ActiveStatusEnum.INACTIVE) {
+                        continue;
+                    }
+                    kafkaTemplate.send(AppConstants.TOPIC_PRESSURE_INPUT, key, value);
+                } else if (fieldName.contains("power")) {
+                    if (activeDevicesMap.get(AppConstants.POWER_DEVICE_PREFIX + key) == ActiveStatusEnum.INACTIVE) {
+                        continue;
+                    }
+                    kafkaTemplate.send(AppConstants.TOPIC_POWER_INPUT, key, value);
+                } else if (fieldName.contains("temperature")) {
+                    if (activeDevicesMap.get(AppConstants.TEMPERATURE_DEVICE_PREFIX + key) == ActiveStatusEnum.INACTIVE) {
+                        continue;
+                    }
+                    kafkaTemplate.send(AppConstants.TOPIC_TEMPERATURE_INPUT, key, value);
+                }
 
-//   }
+            }
+            // If it's more than one element, output each in a single row.
+            else {
+               LOG.info("Value[" + fieldName + "]:");
+               for (int i = 0; i < numValues; i++) {
+                  LOG.info(" - " + response.getObject(fieldName, i));
+               }
+            }
+         }
+         // Something went wrong, to output an error message instead.
+         else {
+            LOG.error("Error[" + fieldName + "]: " + response.getResponseCode(fieldName).name());
+         }
+      }
 
-//   private boolean canReadVirtualModbus(PlcConnection plcConnection) {
-//      // Check if this connection support reading of data.
-//      if (!plcConnection.getMetadata().canRead()) {
-//         LOG.error("This connection doesn't support reading.");
-//         return false;
-//      }
-//      return true;
-//   }
-//}
+   }
+
+   private boolean canReadVirtualModbus(PlcConnection plcConnection) {
+      // Check if this connection support reading of data.
+      if (!plcConnection.getMetadata().canRead()) {
+         LOG.error("This connection doesn't support reading.");
+         return false;
+      }
+      return true;
+   }
+}

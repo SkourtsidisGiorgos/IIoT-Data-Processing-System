@@ -132,9 +132,9 @@ application:
    producer:
       produceIntervalSec: 1
       fakeProducer:
-         enabled: true
-      plc4xProducer:
          enabled: false
+      plc4xProducer:
+         enabled: true
    consumer:
       aggregator:
          aggregateWindowSizeSec: 10

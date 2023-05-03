@@ -25,6 +25,8 @@ Set up external systems:
 - `cd custom_images; docker build --file connect_Dockerfile -t my_kafka_connect .`
 - Go to project's parent folder. Then: `docker-compose build`
 - `docker-compose up -d`
+or 
+- `COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker compose up -d`
 
 Run the app:
 
