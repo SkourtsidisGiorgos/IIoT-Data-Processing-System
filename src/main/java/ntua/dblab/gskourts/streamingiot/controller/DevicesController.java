@@ -1,6 +1,9 @@
 package ntua.dblab.gskourts.streamingiot.controller;
 
 import ntua.dblab.gskourts.streamingiot.model.ActiveStatusEnum;
+import ntua.dblab.gskourts.streamingiot.model.AreaCodeEnum;
+import ntua.dblab.gskourts.streamingiot.model.MeasurementTypeEnum;
+import ntua.dblab.gskourts.streamingiot.model.dto.DeviceDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -56,4 +59,26 @@ public class DevicesController {
       activeDevicesMap.put(deviceId, ActiveStatusEnum.INACTIVE);
       return "redirect:/devices";
    }
+
+
+    @GetMapping("/details/{deviceId}")
+    public String deviceDetails(@PathVariable("deviceId") String deviceId, Model model) {
+        log.info("Getting details for device {}", deviceId);
+        DeviceDTO device = new DeviceDTO();
+        device.setDeviceId(deviceId);
+        device.setDeviceStatus(activeDevicesMap.get(deviceId));
+        if (deviceId.contains("temp")){
+           device.setDeviceType(MeasurementTypeEnum.TEMPERATURE);
+       }
+        else if (deviceId.contains("pressure")){
+           device.setDeviceType(MeasurementTypeEnum.PRESSURE);
+        }
+        else if (deviceId.contains("power")){
+           device.setDeviceType(MeasurementTypeEnum.POWER);
+        }
+        device.setDeviceAreaCode(AreaCodeEnum.values()[(int) (Math.random() * AreaCodeEnum.values().length)]);
+        log.info("Device details: {}", device);
+        model.addAttribute("device", device);
+        return "device-details";
+    }
 }

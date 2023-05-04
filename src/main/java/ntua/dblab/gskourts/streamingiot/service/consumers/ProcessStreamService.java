@@ -117,7 +117,7 @@ public class ProcessStreamService {
                                         log.error("Error in writing to influxDB", e);
                                 }
                                 try {
-                                        redisCommands.set(String.format("temp-%s", key), value.toString());
+                                        redisCommands.set(String.format("temperature-%s", key-1), value.toString());
                                 } catch (Exception e) {
                                         log.error("Error in writing to redis", e);
                                 }
@@ -164,7 +164,7 @@ public class ProcessStreamService {
                                         log.error("Error in writing to influxDB", e);
                                 }
                                 try {
-                                        redisCommands.set(String.format("power-%s", key), value.toString());
+                                        redisCommands.set(String.format("power-%s", key-1), value.toString());
                                 } catch (Exception e) {
                                         log.error("Error in writing to redis", e);
                                 }
@@ -212,7 +212,7 @@ public class ProcessStreamService {
                                       log.error("Error in writing to influxDB", e);
                                 }
                                 try{
-                                      redisCommands.set(String.format("pressure-%s", key), value.toString());
+                                      redisCommands.set(String.format("pressure-%s", key-1), value.toString());
                                 } catch (Exception e){
                                       log.error("Error in writing to redis", e);
                                 }
