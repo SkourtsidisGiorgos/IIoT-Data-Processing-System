@@ -10,7 +10,6 @@ public enum AreaCodeEnum {
     LARISA("LAR"),
     LIMNOS("LIM"),
     LIVADEIA("LIV"),
-    LIXOURNO("LIX"),
     LOUTRAKI("LOU"),
     LAMIA("LAM");
 
