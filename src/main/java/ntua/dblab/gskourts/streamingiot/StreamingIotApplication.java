@@ -6,10 +6,12 @@ import org.apache.kafka.streams.StoreQueryParameters;
 import org.apache.kafka.streams.state.QueryableStoreTypes;
 import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.ApplicationPidFileWriter;
 import org.springframework.boot.context.metrics.buffering.BufferingApplicationStartup;
 import org.springframework.boot.web.context.WebServerPortFileWriter;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.kafka.annotation.EnableKafkaStreams;
 import org.springframework.kafka.config.StreamsBuilderFactoryBean;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +28,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 //@EnableWebMvc
 @OpenAPIDefinition
 @SpringBootApplication
+//@ComponentScan(basePackages = {"ntua.dblab.gskourts.streamingiot"})
 public class StreamingIotApplication {
 
   public static void main(String[] args) {
