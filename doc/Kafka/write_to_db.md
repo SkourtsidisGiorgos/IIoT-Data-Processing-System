@@ -4,7 +4,7 @@ The Apache Kafka Connect API is a framework for building connectors that move da
 
 To use the Connect API to write data to a database, you will need to create a connector that reads data from one or more Kafka topics, transforms the data as needed, and then writes the data to the database.
 
-Here is a high-level overview of the process:
+High-level overview of the process:
 
 First, you will need to set up and configure a Kafka Connect cluster. This will be a separate cluster from your Kafka broker cluster, and it will be used to run the connectors that you create.
 
