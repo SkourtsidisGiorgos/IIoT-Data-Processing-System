@@ -13,7 +13,7 @@ scrape_configs:
       - targets: ['cadvisor:8080']
 
   - job_name: 'spboot-ntua-streaming-iot'
-    metrics_path: '/manage/prometheus'
+    metrics_path: '/streaming-iot/manage/prometheus'
     #metrics_path: '/actuator/prometheus'
     scrape_interval: 5s
     static_configs:
@@ -28,3 +28,9 @@ scrape_configs:
   - job_name: 'influxdb2'
     static_configs:
       - targets: ['influxdb2:8086']
+
+  - job_name: 'kafka'
+    static_configs:
+    - targets: ['jmx-kafka:5556']
+
+#      - targets: ['jmx-kafka:5556','jmx-kafka102:5556', 'jmx-kafka103:5556']

@@ -38,6 +38,8 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+      ZOOKEEPER_INIT_LIMIT: 5
+      ZOOKEEPER_SYNC_LIMIT: 2
 
   broker:
     image: confluentinc/cp-server:7.3.0
@@ -47,7 +49,7 @@ services:
       - zookeeper
     ports:
       - "9092:9092"
-      - "9101:9101"
+      - "9991:9991"
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
@@ -60,13 +62,15 @@ services:
       KAFKA_CONFLUENT_BALANCER_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-      KAFKA_JMX_PORT: 9101
+      KAFKA_JMX_PORT: 9991
       KAFKA_JMX_HOSTNAME: localhost
       KAFKA_CONFLUENT_SCHEMA_REGISTRY_URL: http://schema-registry:8081
       CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS: broker:29092
       CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
       CONFLUENT_METRICS_ENABLE: 'true'
       CONFLUENT_SUPPORT_CUSTOMER_ID: 'anonymous'
+    #   KAFKA_HEAP_OPTS: ${KAFKA_BROKER_HEAP_OPTS}
+    # mem_limit: ${KAFKA_BROKER_MEM_LIMIT}
 
   schema-registry:
     image: confluentinc/cp-schema-registry:7.3.0
@@ -113,11 +117,6 @@ services:
       CONNECT_CONSUMER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringConsumerInterceptor"
       CONNECT_PLUGIN_PATH: "/usr/share/java,/usr/share/confluent-hub-components,/usr/local/share/kafka-connect-influxdb"
       CONNECT_LOG4J_LOGGERS: org.apache.zookeeper=ERROR,org.I0Itec.zkclient=ERROR,org.reflections=ERROR
-    #command:
-    #- bash
-    #- -c
-    #- |
-    #  unset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY && confluent-hub install --no-promp confluentinc/kafka-connect-influxdb:1.2.6 /etc/confluent/docker/run
 
   control-center:
     image: confluentinc/cp-enterprise-control-center:7.3.0
@@ -260,6 +259,21 @@ services:
         # - GF_SMTP_PASSWORD=mypassword
         # - GF_SMTP_FROM_ADDRESS=myaddress@gmail.com
 
+  loki:
+    image: grafana/loki
+    container_name: loki
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+
+  promtail:
+    container_name: promtail
+    image: grafana/promtail
+    restart: always
+    volumes:
+      - ./monitoring/promtail:/etc/promtail
+      - ./logs:/var/log
+    command: -config.file=/etc/promtail/promtail-config.yaml
   #graphite:
   #  image: graphiteapp/graphite-statsd
   #  restart: always
@@ -322,6 +336,7 @@ services:
       #- 10000:10000
     depends_on:
       - cadvisor
+      # - jmx-kafka
     links:
       - cadvisor:cadvisor
 #      - alertmanager:alertmanager
@@ -364,6 +379,20 @@ services:
 ## for a specific device:
 ##    curl -X POST "http://localhost:8086/api/v2/query?org=ntua"   --header "Authorization: Token jSR6OM0zJplfwrs_OCHf88rlb1ClA1v46fz8PxVOLsYrANQoixVqZrqCC9iF-QWDCVnRjaa5jtK4OwBw7-skag=="   --header "Content-Type: application/vnd.flux"   --data 'query=from(bucket:"streaming_iot") |> range(start:-1h) |> filter(fn:(r) => r._measurement == "aggregated_measurement" and r.sensor_id == "temp-1") |> yield()'
 
+  # jmx-kafka:
+  #   image: "sscaling/jmx-prometheus-exporter"
+  #   ports:
+  #    - "5556:5556"
+  #   environment:
+  #    CONFIG_YML : "/etc/jmx_exporter/config.yml"
+  #    JVM_OPTS: ${PROMETHEUS_JMX_AGENT_JVM_OPTS}
+  #    JMX_URL: service:jmx:rmi:///jndi/rmi://broker:9991/jmxrmi
+  #   volumes:
+  #    - ./monitoring/jmx_exporter/config_kafka.yml:/etc/jmx_exporter/config.yml
+  #   container_name: jmx-kafka
+  #   depends_on:
+  #    - broker
+
 #  telegraf:
 #    image: telegraf:latest
 #    container_name: telegraf
@@ -379,3 +408,15 @@ services:
 #    restart: unless-stopped
 #    depends_on:
 #      - influxdb
+
+
+  # zoonavigator:
+  #   image: elkozmon/zoonavigator:${ZOONAVIGATOR_VERSION}
+  #   container_name: zoonavigator
+  #   ports:
+  #     - "8000:8000"
+  #   environment:
+  #     HTTP_PORT: 8000
+  #     AUTO_CONNECT_CONNECTION_STRING: zookeeper:2181
+  #   depends_on:
+  #     - zookeeper

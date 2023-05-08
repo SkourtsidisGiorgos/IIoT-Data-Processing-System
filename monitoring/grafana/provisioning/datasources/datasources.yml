@@ -43,3 +43,11 @@ datasources:
       httpHeaderName1: 'Authorization'
     secureJsonData:
       httpHeaderValue1: 'Token jSR6OM0zJplfwrs_OCHf88rlb1ClA1v46fz8PxVOLsYrANQoixVqZrqCC9iF-QWDCVnRjaa5jtK4OwBw7-skag=='
+  - name: Loki-Spring-Logs
+    type: loki
+    access: proxy
+    url: http://loki:3100
+    basicAuth: false
+    isDefault: false
+    version: 1
+    editable: false
