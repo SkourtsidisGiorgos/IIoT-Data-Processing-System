@@ -342,6 +342,16 @@ services:
 #      - alertmanager:alertmanager
     #network_mode: host
 
+  alertmanager:
+    image: prom/alertmanager #:v0.23.0
+    restart: unless-stopped
+    ports:
+      - "9093:9093"
+    volumes:
+      - "./monitoring/alertmanager:/config"
+      # - alertmanager-data:/data
+    command: --config.file=/config/alertmanager.yml --log.level=debug
+
   redis:
     image: 'bitnami/redis:latest'
     container_name: redis
