@@ -21,7 +21,7 @@
         }
       ]
     },
-    "description": "Observe Spring Boot application with three pillars of observability: Traces (Tempo), Metrics (Prometheus), Logs (Loki) on Grafana through OpenTelemetry and OpenMetrics.",
+    "description": "Observe Streaming IoT application with three pillars of observability: Traces (Tempo), Metrics (Prometheus), Logs (Loki) on Grafana through OpenTelemetry and OpenMetrics.",
     "editable": true,
     "fiscalYearStartMonth": 0,
     "gnetId": 17175,
@@ -679,7 +679,7 @@
     },
     "timepicker": {},
     "timezone": "",
-    "title": "Spring Boot Observability",
+    "title": "Streaming IoT - Observability",
     "uid": "dLsDQIUnzb",
     "version": 1,
     "weekStart": ""
