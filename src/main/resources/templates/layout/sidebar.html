@@ -33,26 +33,26 @@
 
           <li class="nav-header" th:text="'Live Data'"></li>
             <li class="nav-item">
-                <a th:href="@{/data/raw}" class="nav-link" th:classappend="${activeTab == 'policies'} ? 'active': null" id="policies-href">
-                    <i class="fas fa-clipboard-check nav-icon"></i>
+                <a th:href="@{/data/raw}" class="nav-link" th:classappend="${activeTab == 'devices'} ? 'active': null" id="devices-href">
+                    <i class="fa fa-database nav-icon"></i>
                     <span th:text="'Raw data'"></span>
                 </a>
             </li>
           <li class="nav-item">
-            <a th:href="@{/data/daily}" class="nav-link" th:classappend="${activeTab == 'policies'} ? 'active': null" id="daily-href">
+            <a th:href="@{/data/daily}" class="nav-link" th:classappend="${activeTab == 'devices'} ? 'active': null" id="daily-href">
               <i class="fas fa-clipboard-check nav-icon"></i>
               <span th:text="'Daily Info'"></span>
             </a>
           </li>
           <li class="nav-item">
             <a th:href="@{/data/geographical}" class="nav-link" th:classappend="${activeTab == 'strategies'} ? 'active': null" id="geographical-href">
-              <i class="fas fa-democrat nav-icon"></i>
+              <i class="fas fa-map-marked-alt nav-icon"></i>
               <span th:text="'Geographical Analysis'"></span>
             </a>
           </li>
             <li class="nav-item">
                 <a th:href="@{/data/problematic}" class="nav-link" th:classappend="${activeTab == 'strategies'} ? 'active': null" id="problematic-href">
-                    <i class="fas fa-democrat nav-icon"></i>
+                  <i class="material-icons">report_problem</i>
                     <span th:text="'Problematic Sensors'"></span>
                 </a>
             </li>

@@ -26,15 +26,15 @@
                   <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
                </li>
                <li class="nav-item">
-                  <a class="nav-link active" th:href="@{/hive/policies}">HIVE</a>
+                  <a class="nav-link active" th:href="@{/devices}">HIVE</a>
                </li>
                <li class="nav-item">
-                  <a class="nav-link" th:href="@{/hdfs/policies}">HDFS</a>
+                  <a class="nav-link" th:href="@{/hdfs/devices}">HDFS</a>
                </li>
             </ul>
          </nav>
       </th:block>
-      <section layout:fragment="sidebar" th:replace="layout/sidebar :: sidebar('policies')"></section>
+      <section layout:fragment="sidebar" th:replace="layout/sidebar :: sidebar('devices')"></section>
 
 
       <div class="wrapper">
