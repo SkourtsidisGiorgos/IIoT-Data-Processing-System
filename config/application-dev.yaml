@@ -129,7 +129,7 @@ spring:
 application:
    email:
         enabled: true
-        from: streamingiotmailsender@gmail.com
+        from: streaming-iot@ntua.com
         to: streamingiotmailsender@gmail.com
         cc:
         bcc:
@@ -185,6 +185,19 @@ application:
             input: streaming.input.powerMeasurements # Watts
             output: streaming.output.powerMeasurements
          replicas: 1
+   alerts:
+        enabled: true
+        threshold:
+           warning:
+             temperature: 50
+             pressure: 130
+             power: 35000
+           critical:
+             temperature: 60
+             pressure: 200
+             power: 40000
+        email:
+             enabled: true
 
 springdoc: 
   show-actuator: true

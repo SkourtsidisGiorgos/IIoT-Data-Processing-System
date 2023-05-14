@@ -7,9 +7,8 @@ import ntua.dblab.gskourts.streamingiot.model.AlertLevelEnum;
 import ntua.dblab.gskourts.streamingiot.model.dto.EmailDetailsDTO;
 import ntua.dblab.gskourts.streamingiot.util.Utils;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Bean;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
@@ -17,7 +16,22 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequiredArgsConstructor
 public class AlertService {
     @Qualifier("activeDevicesMap")
-    private final ConcurrentHashMap<String, ActiveStatusEnum> activeDevicesMap;
+    private ConcurrentHashMap<String, ActiveStatusEnum> activeDevicesMap;
+
+    @Value("${application.alerts.email.enabled}")
+    private boolean emailEnabled;
+    @Value("${application.alerts.threshold.warning.temperature}")
+    private double warningTemperatureThreshold;
+    @Value("${application.alerts.threshold.warning.pressure}")
+    private double warningPressureThreshold;
+    @Value("${application.alerts.threshold.warning.power}")
+    private double warningPowerThreshold;
+    @Value("${application.alerts.threshold.critical.temperature}")
+    private double criticalTemperatureThreshold;
+    @Value("${application.alerts.threshold.critical.pressure}")
+    private double criticalPressureThreshold;
+    @Value("${application.alerts.threshold.critical.power}")
+    private double criticalPowerThreshold;
 
     private final EmailService emailService;
     public void checkForAlerts(String sensorId, double value, String category) {
@@ -34,80 +48,91 @@ public class AlertService {
         }
     }
     private void checkTemperatureAlert(String sensorId, double temperature) {
-        if (temperature > 40) {
+        if (temperature > warningTemperatureThreshold) {
             temperatureAlert(sensorId, temperature, AlertLevelEnum.WARNING);
-        } else if (temperature > 200) {
+        } else if (temperature > criticalTemperatureThreshold) {
             temperatureAlert(sensorId, temperature, AlertLevelEnum.CRITICAL);
             activeDevicesMap.put(sensorId, ActiveStatusEnum.INACTIVE);
-            String message = String.format("[%s] Temperature alert for sensor \"temp-%s\" with temperature=%s. Timestamp: %s, Hostname: %s Device is now Inactive",
-                    AlertLevelEnum.CRITICAL, sensorId, temperature, System.currentTimeMillis(), Utils.getHostName());
-            EmailDetailsDTO emailDetails = EmailDetailsDTO.builder()
-                    .subject(String.format("[%s] Temperature alert for sensor \"temp-%s\"", AlertLevelEnum.CRITICAL, sensorId))
-                    .messageBody(message)
-                    .build();
-            emailService.sendEmail(emailDetails);
         }
     }
 
     private void checkPowerAlert(String sensorId, double power) {
-        if (power > 28500) {
+        if (power > warningPowerThreshold) {
             powerAlert(sensorId, power, AlertLevelEnum.WARNING);
-        } else if (power > 40000) {
+        } else if (power > criticalPowerThreshold) {
             powerAlert(sensorId, power, AlertLevelEnum.CRITICAL);
             activeDevicesMap.put(sensorId, ActiveStatusEnum.INACTIVE);
-            String message = String.format("[%s] Power alert for sensor \"power-%s\" with power=%s. Timestamp: %s, Hostname: %s Device is now Inactive",
-                    AlertLevelEnum.CRITICAL, sensorId, power, System.currentTimeMillis(), Utils.getHostName());
-            EmailDetailsDTO emailDetails = EmailDetailsDTO.builder()
-                    .subject(String.format("[%s] Power alert for sensor \"power-%s\"", AlertLevelEnum.CRITICAL, sensorId))
-                    .messageBody(message)
-                    .build();
-            emailService.sendEmail(emailDetails);
-
         }
     }
 
     private void checkPressureAlert(String sensorId, double pressure) {
-        if (pressure > 180) {
+        if (pressure > warningPressureThreshold) {
             pressureAlert(sensorId, pressure, AlertLevelEnum.WARNING);
-        } else if (pressure > 200) {
+        } else if (pressure > criticalPressureThreshold) {
             pressureAlert(sensorId, pressure, AlertLevelEnum.CRITICAL);
             activeDevicesMap.put(sensorId, ActiveStatusEnum.INACTIVE);
-            String message = String.format("[%s] Pressure alert for sensor \"pressure-%s\" with pressure=%s. Timestamp: %s, Hostname: %s Device is now Inactive",
-                    AlertLevelEnum.CRITICAL, sensorId, pressure, System.currentTimeMillis(), Utils.getHostName());
-            EmailDetailsDTO emailDetails = EmailDetailsDTO.builder()
-                    .subject(String.format("[%s] Pressure alert for sensor \"pressure-%s\"", AlertLevelEnum.CRITICAL, sensorId))
-                    .messageBody(message)
-                    .build();
-            emailService.sendEmail(emailDetails);
+
         }
     }
     private void temperatureAlert(String sensorId, double temperature, AlertLevelEnum alertLevel) {
+        String message = String.format("[%s] Temperature alert for sensor \"temp-%s\" with temperature=%s. Timestamp: %s, Hostname: %s",
+                alertLevel, sensorId, temperature, Utils.getCurrentDateTime(), Utils.getHostName());
         if (alertLevel == AlertLevelEnum.INFO) {
             log.info("Temperature alert for sensor \"temp-{}\" with temperature={}", sensorId, temperature);
         } else if (alertLevel == AlertLevelEnum.WARNING) {
             log.warn("Temperature alert for sensor \"temp-{}\" with temperature={}", sensorId, temperature);
         } else if (alertLevel == AlertLevelEnum.CRITICAL) {
             log.error("Temperature alert for sensor \"temp-{}\" with temperature={}", sensorId, temperature);
+            message += " Device is now Inactive";
+        }
+        if (emailEnabled) {
+            EmailDetailsDTO emailDetails = EmailDetailsDTO.builder()
+                    .subject(String.format("[%s] Temperature alert for sensor \"temp-%s\"", alertLevel, sensorId))
+                    .messageBody(message)
+                    .build();
+            emailService.sendEmail(emailDetails);
         }
     }
 
     private void powerAlert(String sensorId, double power, AlertLevelEnum alertLevel) {
+        String message = String.format("[%s] Power alert for sensor \"power-%s\" with power=%s. Timestamp: %s, Hostname: %s",
+                alertLevel, sensorId, power, Utils.getCurrentDateTime(), Utils.getHostName());
         if (alertLevel == AlertLevelEnum.INFO) {
             log.info("Power alert for \"power-{}\" with power={}", sensorId, power);
         } else if (alertLevel == AlertLevelEnum.WARNING) {
             log.warn("Power alert for \"power-{}\" with power={}", sensorId, power);
         } else if (alertLevel == AlertLevelEnum.CRITICAL) {
             log.error("Power alert for sensor \"power-{}\" with power={}", sensorId, power);
+            message += " Device is now Inactive";
+        }
+        if (emailEnabled) {
+            EmailDetailsDTO emailDetails = EmailDetailsDTO.builder()
+                    .subject(String.format("[%s] Power alert for sensor \"power-%s\"", alertLevel, sensorId))
+                    .messageBody(message)
+                    .build();
+            emailService.sendEmail(emailDetails);
         }
     }
 
     private void pressureAlert(String sensorId, double pressure, AlertLevelEnum alertLevel) {
+        String message = String.format("[%s] Pressure alert for sensor \"pressure-%s\" with pressure=%s. Timestamp: %s, Hostname: %s",
+                alertLevel, sensorId, pressure, Utils.getCurrentDateTime(), Utils.getHostName());
         if (alertLevel == AlertLevelEnum.INFO) {
             log.info("Pressure alert for sensor \"pressure-{}\" with pressure {}", sensorId, pressure);
         } else if (alertLevel == AlertLevelEnum.WARNING) {
             log.warn("Pressure alert for sensor \"pressure-{}\" with pressure {}", sensorId, pressure);
         } else if (alertLevel == AlertLevelEnum.CRITICAL) {
             log.error("Pressure alert for sensor \"pressure-{}\" with pressure {}", sensorId, pressure);
+            message += " Device is now Inactive";
         }
+
+        if (!emailEnabled) {
+            return;
+        }
+        EmailDetailsDTO emailDetails = EmailDetailsDTO.builder()
+                .subject(String.format("[%s] Pressure alert for sensor \"pressure-%s\"", alertLevel, sensorId))
+                .messageBody(message)
+                .build();
+        emailService.sendEmail(emailDetails);
     }
 }
