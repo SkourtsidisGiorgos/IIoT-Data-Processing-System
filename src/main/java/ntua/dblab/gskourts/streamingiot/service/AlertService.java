@@ -2,14 +2,24 @@ package ntua.dblab.gskourts.streamingiot.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import ntua.dblab.gskourts.streamingiot.model.ActiveStatusEnum;
 import ntua.dblab.gskourts.streamingiot.model.AlertLevelEnum;
+import ntua.dblab.gskourts.streamingiot.model.dto.EmailDetailsDTO;
+import ntua.dblab.gskourts.streamingiot.util.Utils;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
+
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class AlertService {
+    @Qualifier("activeDevicesMap")
+    private final ConcurrentHashMap<String, ActiveStatusEnum> activeDevicesMap;
 
+    private final EmailService emailService;
     public void checkForAlerts(String sensorId, double value, String category) {
         switch (category) {
             case "temperature":
@@ -26,16 +36,33 @@ public class AlertService {
     private void checkTemperatureAlert(String sensorId, double temperature) {
         if (temperature > 40) {
             temperatureAlert(sensorId, temperature, AlertLevelEnum.WARNING);
-        } else if (temperature > 50) {
+        } else if (temperature > 200) {
             temperatureAlert(sensorId, temperature, AlertLevelEnum.CRITICAL);
+            activeDevicesMap.put(sensorId, ActiveStatusEnum.INACTIVE);
+            String message = String.format("[%s] Temperature alert for sensor \"temp-%s\" with temperature=%s. Timestamp: %s, Hostname: %s Device is now Inactive",
+                    AlertLevelEnum.CRITICAL, sensorId, temperature, System.currentTimeMillis(), Utils.getHostName());
+            EmailDetailsDTO emailDetails = EmailDetailsDTO.builder()
+                    .subject(String.format("[%s] Temperature alert for sensor \"temp-%s\"", AlertLevelEnum.CRITICAL, sensorId))
+                    .messageBody(message)
+                    .build();
+            emailService.sendEmail(emailDetails);
         }
     }
 
     private void checkPowerAlert(String sensorId, double power) {
-        if (power > 16500) {
+        if (power > 28500) {
             powerAlert(sensorId, power, AlertLevelEnum.WARNING);
-        } else if (power > 18000) {
+        } else if (power > 40000) {
             powerAlert(sensorId, power, AlertLevelEnum.CRITICAL);
+            activeDevicesMap.put(sensorId, ActiveStatusEnum.INACTIVE);
+            String message = String.format("[%s] Power alert for sensor \"power-%s\" with power=%s. Timestamp: %s, Hostname: %s Device is now Inactive",
+                    AlertLevelEnum.CRITICAL, sensorId, power, System.currentTimeMillis(), Utils.getHostName());
+            EmailDetailsDTO emailDetails = EmailDetailsDTO.builder()
+                    .subject(String.format("[%s] Power alert for sensor \"power-%s\"", AlertLevelEnum.CRITICAL, sensorId))
+                    .messageBody(message)
+                    .build();
+            emailService.sendEmail(emailDetails);
+
         }
     }
 
@@ -44,6 +71,14 @@ public class AlertService {
             pressureAlert(sensorId, pressure, AlertLevelEnum.WARNING);
         } else if (pressure > 200) {
             pressureAlert(sensorId, pressure, AlertLevelEnum.CRITICAL);
+            activeDevicesMap.put(sensorId, ActiveStatusEnum.INACTIVE);
+            String message = String.format("[%s] Pressure alert for sensor \"pressure-%s\" with pressure=%s. Timestamp: %s, Hostname: %s Device is now Inactive",
+                    AlertLevelEnum.CRITICAL, sensorId, pressure, System.currentTimeMillis(), Utils.getHostName());
+            EmailDetailsDTO emailDetails = EmailDetailsDTO.builder()
+                    .subject(String.format("[%s] Pressure alert for sensor \"pressure-%s\"", AlertLevelEnum.CRITICAL, sensorId))
+                    .messageBody(message)
+                    .build();
+            emailService.sendEmail(emailDetails);
         }
     }
     private void temperatureAlert(String sensorId, double temperature, AlertLevelEnum alertLevel) {

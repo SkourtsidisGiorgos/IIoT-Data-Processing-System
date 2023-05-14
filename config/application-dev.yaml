@@ -48,6 +48,18 @@ management:
 spring:
    application.name: streaming-iot
    banner.location: classpath:banner.txt
+   mail:
+      host: smtp.gmail.com
+      port: 587
+      username: streamingiotmailsender@gmail.com
+      password: ${SPRING_MAIL_PASSWORD}
+      properties:
+         mail:
+            smtp:
+               auth: true
+               starttls:
+                  enable: true
+
 #   autoconfigure:
 #      exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
 
@@ -115,6 +127,12 @@ spring:
       
 
 application:
+   email:
+        enabled: true
+        from: streamingiotmailsender@gmail.com
+        to: streamingiotmailsender@gmail.com
+        cc:
+        bcc:
    security:
       enabled: false
    influxdb:

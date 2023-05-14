@@ -1,6 +1,6 @@
 package ntua.dblab.gskourts.streamingiot.controller;
 
-import ntua.dblab.gskourts.streamingiot.web.dto.GenericResponse;
+import ntua.dblab.gskourts.streamingiot.model.dto.GenericResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;

@@ -1,19 +1,16 @@
-package ntua.dblab.gskourts.streamingiot.web.dto;
+package ntua.dblab.gskourts.streamingiot.model.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class EmailDetailsDTO {
    // Class data members
-   private String sender;
-   private String recipientTo;
-   private String recipientCc;
-   private String recipientBcc;
    private String messageBody;
    private String subject;
-
 }

@@ -4,6 +4,9 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import ntua.dblab.gskourts.streamingiot.model.ActiveStatusEnum;
+import ntua.dblab.gskourts.streamingiot.model.dto.EmailDetailsDTO;
+import ntua.dblab.gskourts.streamingiot.service.EmailService;
+import ntua.dblab.gskourts.streamingiot.util.Utils;
 import org.apache.kafka.clients.admin.KafkaAdminClient;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +20,9 @@ import org.springframework.boot.actuate.endpoint.web.annotation.ControllerEndpoi
 import org.springframework.boot.actuate.endpoint.web.annotation.ServletEndpointsSupplier;
 import org.springframework.boot.actuate.endpoint.web.servlet.WebMvcEndpointHandlerMapping;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -32,6 +37,8 @@ import org.springframework.util.StringUtils;
 @Component
 public class AppBeans {
 
+   @Autowired
+   private EmailService emailService;
    private final AppConf appConf;
 
    //@Autowired
@@ -136,6 +143,17 @@ public class AppBeans {
       }
       return activeDevicesMap;
    }
+
+//   send email on startup
+   @EventListener(ApplicationReadyEvent.class)
+    public void sendEmailOnStartup() {
+      EmailDetailsDTO emailDetails = new EmailDetailsDTO();
+      emailDetails.setSubject("Streaming IoT Application Started");
+      emailDetails.setMessageBody(String.format("Streaming IoT Application Started. Timestamp: %s, Hostname: %s PID: %s", System.currentTimeMillis(),
+              Utils.getHostName(), Utils.getPid()));
+      emailService.sendEmail(emailDetails);
+      }
+
 
    //   @Bean
    //   JedisConnectionFactory jedisConnectionFactory() {

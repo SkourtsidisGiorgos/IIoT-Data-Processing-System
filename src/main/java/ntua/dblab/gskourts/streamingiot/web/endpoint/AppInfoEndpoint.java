@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import ntua.dblab.gskourts.streamingiot.util.AppConstants;
-import ntua.dblab.gskourts.streamingiot.web.dto.GenericResponse;
+import ntua.dblab.gskourts.streamingiot.model.dto.GenericResponse;
 
 @RestController
 @RequestMapping(value = "/app/info", produces = MediaType.APPLICATION_JSON_VALUE)

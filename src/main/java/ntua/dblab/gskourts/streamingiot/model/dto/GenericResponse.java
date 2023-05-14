@@ -1,4 +1,4 @@
-package ntua.dblab.gskourts.streamingiot.web.dto;
+package ntua.dblab.gskourts.streamingiot.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -93,18 +93,18 @@ public class GenericResponse<V, X> {
    }
 
    public static final <V, X> GenericResponse<V, X> factoryError(int errorCode, String errorMessage,
-         String errorCause, Exception cause) {
+                                                                 String errorCause, Exception cause) {
 
       return factoryError(errorCode, errorMessage, errorCause, cause, true);
    }
 
    public static final <V, X> GenericResponse<V, X> factoryErrorAPI(int errorCode, String errorMessage,
-         String errorCause, Exception cause) {
+                                                                    String errorCause, Exception cause) {
       return factoryError(errorCode, errorMessage, errorCause, cause, false);
    }
 
    public static final <V, X> GenericResponse<V, X> factoryError(int errorCode, String errorMessage,
-         String errorCause, Exception cause, boolean applyException) {
+                                                                 String errorCause, Exception cause, boolean applyException) {
 
       GenericResponse<V, X> x = new GenericResponse<V, X>(errorCode, null, removeNewlines(errorMessage),
             errorCause != null ? errorCause : buildErrorCauseMessage(cause));

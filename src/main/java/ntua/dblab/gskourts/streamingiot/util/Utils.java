@@ -28,6 +28,7 @@ public class Utils {
    private static String ip = AppConstants.UNKNOWN;
    private static String hostname = AppConstants.UNKNOWN;
    private static String jvmId = AppConstants.UNKNOWN;
+   private static String pid = AppConstants.UNKNOWN;
    private static String uuid = UUID.randomUUID().toString();
 
    static {
@@ -200,4 +201,10 @@ public class Utils {
       return System.getProperty("user.name");
    }
 
+    public static String getPid() {
+        String processName =
+                java.lang.management.ManagementFactory.getRuntimeMXBean().getName();
+        return processName.split("@")[0];
+
+   }
 }
