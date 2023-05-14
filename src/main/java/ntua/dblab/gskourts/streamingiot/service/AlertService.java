@@ -13,10 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @Slf4j
-@RequiredArgsConstructor
 public class AlertService {
-    @Qualifier("activeDevicesMap")
-    private ConcurrentHashMap<String, ActiveStatusEnum> activeDevicesMap;
 
     @Value("${application.alerts.email.enabled}")
     private boolean emailEnabled;
@@ -34,6 +31,12 @@ public class AlertService {
     private double criticalPowerThreshold;
 
     private final EmailService emailService;
+    private final ConcurrentHashMap<String, ActiveStatusEnum> activeDevicesMap;
+
+    public AlertService(EmailService emailService, @Qualifier("activeDevicesMap") ConcurrentHashMap<String, ActiveStatusEnum> activeDevicesMap) {
+        this.emailService = emailService;
+        this.activeDevicesMap = activeDevicesMap;
+    }
     public void checkForAlerts(String sensorId, double value, String category) {
         switch (category) {
             case "temperature":
