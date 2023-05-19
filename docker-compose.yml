@@ -7,7 +7,8 @@ volumes:
     prometheus_data: {}
     grafana_data: {}
     influxdb2:
-    redis_data: 
+    redis_data:
+    postgres-db:
 
 
 services:
@@ -297,21 +298,21 @@ services:
         - 8080:8080
       #network_mode: host
 
-  # node-exporter:
-  #   image: prom/node-exporter:latest
-  #   container_name: node-exporter
-  #   restart: unless-stopped
-  #   volumes:
-  #     - /proc:/host/proc:ro
-  #     - /sys:/host/sys:ro
-  #     - /:/rootfs:ro
-  #   command:
-  #     - '--path.procfs=/host/proc'
-  #     - '--path.rootfs=/rootfs'
-  #     - '--path.sysfs=/host/sys'
-  #     - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
-  #   expose:
-  #     - 9100
+  node-exporter:
+     image: prom/node-exporter:latest
+     container_name: node-exporter
+     restart: unless-stopped
+     volumes:
+       - /proc:/host/proc:ro
+       - /sys:/host/sys:ro
+       - /:/rootfs:ro
+     command:
+       - '--path.procfs=/host/proc'
+       - '--path.rootfs=/rootfs'
+       - '--path.sysfs=/host/sys'
+       - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+     expose:
+       - 9100
 
   prometheus:
     image: prom/prometheus
@@ -430,3 +431,16 @@ services:
   #     AUTO_CONNECT_CONNECTION_STRING: zookeeper:2181
   #   depends_on:
   #     - zookeeper
+
+
+  postgres:
+    container_name: postgres
+    image: postgres:15-alpine3.18
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: SomeSecretPassword
+      PGDATA: /data/postgres
+    volumes:
+      - postgres-db:/data/postgres
+    ports:
+      - "5432:5432"

@@ -1,10 +1,13 @@
 package ntua.dblab.gskourts.streamingiot.service.consumers;
 
 import java.time.Duration;
+import java.util.concurrent.ConcurrentHashMap;
 
 import io.lettuce.core.api.sync.RedisCommands;
 import ntua.dblab.gskourts.streamingiot.components.InfluxDBWriter;
+import ntua.dblab.gskourts.streamingiot.model.ActiveStatusEnum;
 import ntua.dblab.gskourts.streamingiot.service.AlertService;
+import ntua.dblab.gskourts.streamingiot.util.AppConstants;
 import ntua.dblab.gskourts.streamingiot.util.InfluxDbConfiguration;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KeyValue;
@@ -21,6 +24,7 @@ import org.apache.kafka.streams.kstream.Windowed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Async;
@@ -41,6 +45,9 @@ public class ProcessStreamService {
       private final String pressureOutputTopic;
       private final String powerInputTopic;
       private final String powerOutputTopic;
+      @Autowired
+      @Qualifier("activeDevicesMap")
+      private ConcurrentHashMap<String, ActiveStatusEnum> activeDevicesMap;
 //      private final RedisTemplate redisTemplate;
       private final RedisCommands<String,String> redisCommands;
       private final InfluxDbConfiguration influxDbConfiguration;
@@ -85,6 +92,13 @@ public class ProcessStreamService {
                   KStream<Integer, Integer> stream = builder
                           .stream(tempInputTopic, Consumed.with(Serdes.Integer(), Serdes.Integer()))
                           .filter((key, value) -> key != null && value != null)
+                          .filter((key, value) -> {
+                                    if (activeDevicesMap.containsKey(AppConstants.TEMPERATURE_DEVICE_PREFIX + key.toString())) {
+                                      return activeDevicesMap.get(AppConstants.TEMPERATURE_DEVICE_PREFIX + key).equals(ActiveStatusEnum.ACTIVE);
+                                    } else {
+                                        return false;
+                                    }
+                            })
                           .peek((key, value) -> log.info("Topic: {}. Temperature={}, key={}",
                                   tempInputTopic, value, key));
                   Duration windowSize = Duration.ofSeconds(aggregateWindowSizeSec);
@@ -138,6 +152,13 @@ public class ProcessStreamService {
                   KStream<Integer, Integer> stream = builder
                           .stream(powerInputTopic, Consumed.with(Serdes.Integer(), Serdes.Integer()))
                           .filter((key, value) -> key != null && value != null)
+                          .filter((key, value) -> {
+                                        if (activeDevicesMap.containsKey(AppConstants.POWER_DEVICE_PREFIX + key.toString())) {
+                                            return activeDevicesMap.get(AppConstants.POWER_DEVICE_PREFIX + key).equals(ActiveStatusEnum.ACTIVE);
+                                        } else {
+                                            return false;
+                                        }
+                                })
                           .peek((key, value) -> log.info("Topic: {}. Power={}, key={}",
                                   powerInputTopic, value, key));
                   Duration windowSize = Duration.ofSeconds(aggregateWindowSizeSec);
@@ -183,6 +204,13 @@ public class ProcessStreamService {
                   KStream<Integer, Integer> stream = builder
                           .stream(pressureInputTopic, Consumed.with(Serdes.Integer(), Serdes.Integer()))
                           .filter((key, value) -> key != null && value != null)
+                          .filter((key, value) -> {
+                                        if (activeDevicesMap.containsKey(AppConstants.PRESSURE_DEVICE_PREFIX + key.toString())) {
+                                            return activeDevicesMap.get(AppConstants.PRESSURE_DEVICE_PREFIX + key).equals(ActiveStatusEnum.ACTIVE);
+                                        } else {
+                                            return false;
+                                        }
+                                })
                           .peek((key, value) -> log.info("Topic: {}. Pressure={}, key={}",
                                   pressureInputTopic, value, key));
                   Duration windowSize = Duration.ofSeconds(aggregateWindowSizeSec);
