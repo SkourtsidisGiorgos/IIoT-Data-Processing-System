@@ -12,18 +12,8 @@ Supervisor: Paraskevas Kerasiotis
 
 ## How to run
 
-Go to project's root directory.  
-
-Configure prometheus to read metrics from our app (optional):  
-
-- Get Your IP:  
-  - Linux: `ip route get 8.8.8.8 | grep -Po '(?<=src )(\d{1,3}\.){3}\d{1,3}'`
-  - Windows: `ipconfig | findstr /i "IPv4 Address"`
-- Open file `./monitoring/prometheus/prometheus_dev.yml`. Replace `10.0.2.15` in line 22 with your IP.
-
-Set up external systems:
-- `cd custom_images; docker build --file connect_Dockerfile -t my_kafka_connect .`
-- Go to project's parent folder. Then: `docker-compose build`
+- Go to project's parent folder. Then: 
+- `docker-compose build` (optional)
 - `docker-compose up -d`
 or 
 - `COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker compose up -d`
@@ -36,12 +26,15 @@ Run the app:
 ## Features
 
 - Multiple producers/consumers using Spring's Beans
+- Multiple measurement types (temperature, power, pressure)
 - Use spring profiles to change environment. (dev,test,prod)
 - Export metrics to JMX, Prometheus, Graphite
 - Start-up script
 - Log compression and retention
 - Status endpoints for app: `/app/info/status`, `/app/info/healch`, `/app/info/buildinfo` etc
 - Write gc logs
+- Use springdoc-openapi-ui for swagger-ui
+- Use spring-boot-admin for monitoring
 
 ## Swagger-ui
 - visit: `http://localhost:10000/swagger-ui/` (when using springfox-swagger2)
@@ -49,6 +42,7 @@ Run the app:
 
 ## Topic organization
 
+1 Topic per measurement type.
 ```bash
   temperature(0)   |   power(1)   |   pressure(2)
   -----------------|--------------|---------------
