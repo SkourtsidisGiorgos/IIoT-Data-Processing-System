@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>ntua.dblab.gskourts</groupId>
 	<artifactId>streaming-iot</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<name>streaming-iot</name>
 	<description>NTUA Student Giorgos Skourtsidis&apos;s Thesis</description>
 	<properties>
