@@ -56,4 +56,16 @@ public class DevicesAPIController {
       activeDevicesMap.put(deviceId, ActiveStatusEnum.INACTIVE);
       return ResponseEntity.ok(String.format("Device %s deactivated", deviceId));
    }
+
+    @PostMapping("/isActive/{deviceId}")
+    public ResponseEntity<String> isActiveDevice(@PathVariable String deviceId) {
+        if (activeDevicesMap.get(deviceId) == null) {
+            return ResponseEntity.badRequest().body(String.format("Device %s does not exist", deviceId));
+        }
+
+        if (activeDevicesMap.get(deviceId).equals(ActiveStatusEnum.INACTIVE)) {
+            return ResponseEntity.ok(String.format("Device %s is inactive", deviceId));
+        }
+        return ResponseEntity.ok(String.format("Device %s is active", deviceId));
+    }
 }

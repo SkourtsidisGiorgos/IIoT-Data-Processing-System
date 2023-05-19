@@ -1,17 +1,15 @@
 package ntua.dblab.gskourts.streamingiot.service.producers;
 
-import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
 
+import lombok.extern.slf4j.Slf4j;
 import ntua.dblab.gskourts.streamingiot.model.ActiveStatusEnum;
 import org.apache.plc4x.java.PlcDriverManager;
 import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.messages.PlcReadRequest;
 import org.apache.plc4x.java.api.messages.PlcReadResponse;
 import org.apache.plc4x.java.api.types.PlcResponseCode;
-import org.javatuples.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,13 +21,11 @@ import org.springframework.context.event.EventListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
-import lombok.RequiredArgsConstructor;
 import ntua.dblab.gskourts.streamingiot.util.AppConf;
 import ntua.dblab.gskourts.streamingiot.util.AppConstants;
-import reactor.core.publisher.Flux;
-import scala.App;
 
 @Service
+@Slf4j
 @Qualifier("plc4xProducer")
 @ConditionalOnProperty(name="application.producer.plc4xProducer.enabled", havingValue="true")
 public class Plc4xProducer {
@@ -116,17 +112,23 @@ public class Plc4xProducer {
 //                LOG.info("Value[" + fieldName + "]: " + value);
 //              if name contains pressure, power or temperature
                 if (fieldName.contains("pressure")) {
-                    if (activeDevicesMap.get(AppConstants.PRESSURE_DEVICE_PREFIX + key) == ActiveStatusEnum.INACTIVE) {
+                    ActiveStatusEnum status = activeDevicesMap.get(AppConstants.PRESSURE_DEVICE_PREFIX + key);
+                    if (status == null || status.equals(ActiveStatusEnum.INACTIVE)) {
+                        log.trace("{} status: {}", AppConstants.PRESSURE_DEVICE_PREFIX + key, status);
                         continue;
                     }
                     kafkaTemplate.send(AppConstants.TOPIC_PRESSURE_INPUT, key, value);
                 } else if (fieldName.contains("power")) {
-                    if (activeDevicesMap.get(AppConstants.POWER_DEVICE_PREFIX + key) == ActiveStatusEnum.INACTIVE) {
+                    ActiveStatusEnum status = activeDevicesMap.get(AppConstants.POWER_DEVICE_PREFIX + key);
+                    if (status == null || status.equals(ActiveStatusEnum.INACTIVE)) {
+                        log.trace("{} status: {}", AppConstants.POWER_DEVICE_PREFIX + key, status);
                         continue;
                     }
                     kafkaTemplate.send(AppConstants.TOPIC_POWER_INPUT, key, value);
                 } else if (fieldName.contains("temperature")) {
-                    if (activeDevicesMap.get(AppConstants.TEMPERATURE_DEVICE_PREFIX + key) == ActiveStatusEnum.INACTIVE) {
+                    ActiveStatusEnum status = activeDevicesMap.get(AppConstants.TEMPERATURE_DEVICE_PREFIX + key);
+                    if (status == null || status.equals(ActiveStatusEnum.INACTIVE)) {
+                        log.trace("{} status: {}", AppConstants.TEMPERATURE_DEVICE_PREFIX + key, status);
                         continue;
                     }
                     kafkaTemplate.send(AppConstants.TOPIC_TEMPERATURE_INPUT, key, value);

@@ -30,9 +30,13 @@ public class RedisController {
         return redisCommands.get(sensor);
     }
 
-    // get all keys-value pairs
+    // get all keys and values pairs
     @GetMapping("/all")
     public String getAll() {
-        return redisCommands.keys("*").toString();
+        StringBuilder sb = new StringBuilder();
+        for (String key : redisCommands.keys("*")) {
+            sb.append(key).append(": ").append(redisCommands.get(key)).append("\n");
+        }
+        return sb.toString();
     }
 }

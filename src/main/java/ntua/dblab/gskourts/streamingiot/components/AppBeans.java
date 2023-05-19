@@ -3,6 +3,7 @@ package ntua.dblab.gskourts.streamingiot.components;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+import lombok.extern.slf4j.Slf4j;
 import ntua.dblab.gskourts.streamingiot.model.ActiveStatusEnum;
 import ntua.dblab.gskourts.streamingiot.model.dto.EmailDetailsDTO;
 import ntua.dblab.gskourts.streamingiot.service.EmailService;
@@ -35,6 +36,7 @@ import ntua.dblab.gskourts.streamingiot.util.AppConstants;
 import org.springframework.util.StringUtils;
 
 @Component
+@Slf4j
 public class AppBeans {
 
    @Autowired
@@ -132,15 +134,16 @@ public class AppBeans {
    @Qualifier("activeDevicesMap")
    ConcurrentHashMap<String, ActiveStatusEnum> activeDevicesMap() {
       ConcurrentHashMap<String, ActiveStatusEnum> activeDevicesMap = new ConcurrentHashMap<>();
-      for (int i = 0; i < appConf.getTemperatureDevicesNum(); i++) {
+      for (int i = 1; i <= appConf.getTemperatureDevicesNum(); i++) {
          activeDevicesMap.put(AppConstants.TEMPERATURE_DEVICE_PREFIX + i, ActiveStatusEnum.ACTIVE);
       }
-      for (int i = 0; i < appConf.getPressureDevicesNum(); i++) {
+      for (int i = 1; i <= appConf.getPressureDevicesNum(); i++) {
          activeDevicesMap.put(AppConstants.PRESSURE_DEVICE_PREFIX + i, ActiveStatusEnum.ACTIVE);
       }
-      for (int i = 0; i < appConf.getPowerDevicesNum(); i++) {
+      for (int i = 1; i <= appConf.getPowerDevicesNum(); i++) {
          activeDevicesMap.put(AppConstants.POWER_DEVICE_PREFIX + i, ActiveStatusEnum.ACTIVE);
       }
+      log.info("activeDevicesMap: {}", activeDevicesMap);
       return activeDevicesMap;
    }
 

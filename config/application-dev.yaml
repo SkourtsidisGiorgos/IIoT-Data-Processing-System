@@ -197,21 +197,21 @@ application:
       measurementTopicsCount: 3
       temperature:
          measurementTopicId: 0
-         devicesNum: 3
+         devicesNum: 4
          name:
             input: streaming.input.temperatureMeasurements # Celsius
             output: streaming.output.temperatureMeasurements
          replicas: 1
       pressure: 
          measurementTopicId: 1
-         devicesNum: 2
+         devicesNum: 3
          name:
             input: streaming.input.pressureMeasurements # PSI
             output: streaming.output.pressureMeasurements 
          replicas: 1
       power:
          measurementTopicId: 2
-         devicesNum: 2
+         devicesNum: 3
          name:
             input: streaming.input.powerMeasurements # Watts
             output: streaming.output.powerMeasurements
