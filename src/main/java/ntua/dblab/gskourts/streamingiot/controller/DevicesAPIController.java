@@ -1,19 +1,11 @@
 package ntua.dblab.gskourts.streamingiot.controller;
 
-import lombok.RequiredArgsConstructor;
 import ntua.dblab.gskourts.streamingiot.model.ActiveStatusEnum;
-import ntua.dblab.gskourts.streamingiot.model.AreaCodeEnum;
-import ntua.dblab.gskourts.streamingiot.model.MeasurementTypeEnum;
-import ntua.dblab.gskourts.streamingiot.model.entity.DeviceEntity;
-import ntua.dblab.gskourts.streamingiot.service.DeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 
