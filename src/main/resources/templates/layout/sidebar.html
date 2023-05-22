@@ -33,7 +33,7 @@
 
           <li class="nav-header" th:text="'Live Data'"></li>
             <li class="nav-item">
-                <a th:href="@{/data/raw}" class="nav-link" th:classappend="${activeTab == 'devices'} ? 'active': null" id="devices-href">
+                <a th:href="@{/devices/data/raw}" class="nav-link" th:classappend="${activeTab == 'devices'} ? 'active': null" id="devices-href">
                     <i class="fa fa-database nav-icon"></i>
                     <span th:text="'Raw data'"></span>
                 </a>

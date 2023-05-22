@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html>
+<html th:lang="__${langActive}__" lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/layout}">
 <head>
     <meta charset="ISO-8859-1">
     <title>Home</title>
@@ -53,14 +54,14 @@
                         },
                         scaleLabel : {
                             display : true,
-                            labelString : 'Time'
+                            labelString : 'Consume Time'
                         }
                     } ],
                     yAxes : [ {
                         display : true,
                         scaleLabel : {
                             display : true,
-                            labelString : 'Value'
+                            labelString : 'Temperature (C)'
                         }
                     } ]
                 }
@@ -120,23 +121,29 @@
     </script>
 </head>
 <body>
+
+<ol layout:fragment="breadcrumb">
+    <li class="breadcrumb-item"><a th:href="@{/home}" th:text="Home"></a></li>
+    <li class="breadcrumb-item active" th:text="'Raw Data'"></li>
+</ol>
+<section layout:fragment="content">
 <div class="alert alert-danger" role="alert" style="width:300px;margin-left:40%;margin-top:10px;">
     <p class="text-center">Current Average Temperature : <b id="temperature">0</b></p>
 </div>
 <div class="model">
-    <div class="modal-dialog" style="width:80%;height:auto">
+    <div class="modal-dialog modal-lg" style="width:90%; height:80%;">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Temperature</h5>
             </div>
             <div class="model-body">
-                <div class="container" style="width:80%">
-                    <canvas id="lineChart"></canvas>
+                <div class="container-fluid">
+                    <canvas id="lineChart" style="width:150%; height:60vh;"></canvas>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
+</section>
 </body>
 </html>
