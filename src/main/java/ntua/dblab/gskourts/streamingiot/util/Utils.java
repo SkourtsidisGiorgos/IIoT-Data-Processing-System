@@ -205,6 +205,19 @@ public class Utils {
         String processName =
                 java.lang.management.ManagementFactory.getRuntimeMXBean().getName();
         return processName.split("@")[0];
+   }
 
+   public  static boolean isNumeric(String str)
+   {
+      try
+      {
+         @SuppressWarnings("unused")
+         double d = Double.parseDouble(str);
+      }
+      catch(NumberFormatException nfe)
+      {
+         return false;
+      }
+      return true;
    }
 }

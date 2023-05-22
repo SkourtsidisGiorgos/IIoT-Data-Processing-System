@@ -81,4 +81,10 @@ public class DevicesController {
         model.addAttribute("device", device);
         return "device-details";
     }
+
+    @GetMapping("/data/raw")
+    public String getRawData(Model model) {
+        model.addAttribute("activeDevices", activeDevicesMap);
+        return "raw-data";
+    }
 }
