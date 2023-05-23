@@ -270,7 +270,7 @@ services:
   promtail:
     container_name: promtail
     image: grafana/promtail
-    restart: always
+#    restart: always
     volumes:
       - ./monitoring/promtail:/etc/promtail
       - ./logs:/var/log
@@ -301,7 +301,7 @@ services:
   node-exporter:
      image: prom/node-exporter:latest
      container_name: node-exporter
-     restart: unless-stopped
+#     restart: unless-stopped
      volumes:
        - /proc:/host/proc:ro
        - /sys:/host/sys:ro
@@ -345,7 +345,7 @@ services:
 
   alertmanager:
     image: prom/alertmanager #:v0.23.0
-    restart: unless-stopped
+#    restart: unless-stopped
     ports:
       - "9093:9093"
     volumes:
@@ -384,7 +384,7 @@ services:
       DOCKER_INFLUXDB_INIT_ORG: ntua
       DOCKER_INFLUXDB_INIT_BUCKET: streaming_iot
       DOCKER_INFLUXDB_INIT_RETENTION: 1w
-    restart: unless-stopped
+#    restart: unless-stopped
 ## Get data from InfluxDB:
 ##    curl -X POST "http://localhost:8086/api/v2/query?org=ntua"   --header "Authorization: Token jSR6OM0zJplfwrs_OCHf88rlb1ClA1v46fz8PxVOLsYrANQoixVqZrqCC9iF-QWDCVnRjaa5jtK4OwBw7-skag=="   --header "Content-Type: application/vnd.flux"   --data 'query=from(bucket:"streaming_iot") |> range(start:-1h) |> filter(fn:(r) => r._measurement == "aggregated_measurement") |> yield()'
 ## for a specific device:
