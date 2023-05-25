@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<!--<html th:lang="__${langActive}__" lang="en" xmlns:th="http://www.thymeleaf.org"-->
+<!--      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/layout}">-->
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title th:text="'Geo Analysis'"></title>
+    <link rel="icon" th:href="@{https://iili.io/HvmAqyN.png}"
+          type="image/x-icon" />
+    <!-- DataTables  & Plugins -->
+    <link rel="stylesheet" th:href="@{/webjars/AdminLTE/3.2.0/dist/css/adminlte.min.css}" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <style>
+        /* CSS to center the map */
+        #map {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            height: 90%;
+            width: 90%;
+        }
+    </style>
+</head>
+
+<body>
+<!--<ol layout:fragment="breadcrumb">-->
+<!--    <li class="breadcrumb-item"><a th:href="@{/home}" th:text="Home"></a></li>-->
+<!--    <li class="breadcrumb-item active" th:text="'Geographical Analysis'"></li>-->
+<!--</ol>-->
+<!-- Add AdminLTE layout structure -->
+<!-- ... -->
+<!--<section layout:fragment="content">-->
+
+    <div id="map"></div>
+</section>
+
+<script>
+    console.log("init map");
+    let map = L.map('map').setView([37.98054, 23.77988], 16);
+    console.log("map=" + map);
+    // Add a tile layer to the map
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: 'Devices data',
+        maxZoom: 18,
+    }).addTo(map);
+
+    let deviceIcon = L.icon({
+        iconUrl: '/img/sensor.png', // The url of the image
+        iconSize: [1024, 1024], // Adjust the size of the icon as needed
+        iconAnchor: [1024, 1024] // Adjust the anchor point of the icon as needed
+    });
+
+    // Example device locations
+    let deviceLocations = [
+        { lat: 37.981, lng: 23.778 },
+        { lat: 37.982, lng: 23.780 },
+        { lat: 37.979, lng: 23.782 }
+    ];
+
+    // draw something on map
+    // let polygon = L.polygon([
+    //     [37.981, 23.778],
+    //     [37.982, 23.780],
+    //     [37.979, 23.782]
+    // ]).addTo(map);
+
+    // put icons on map
+    let marker = L.marker([37.97905504246459, 23.783104310111263]).addTo(map);
+    // add popup to marker
+    marker.bindPopup("<b>Device H34G</b><br>Sensor temperature-1").openPopup();
+
+    // add more devices-sensors
+    let marker2 = L.marker([37.975248088864056, 23.78021959436339]).addTo(map);
+    marker2.bindPopup("<b>Device A8PML</b><br>Sensor temperature-2").openPopup();
+    let marker3 = L.marker([37.977248088864056, 23.78021959436339]).addTo(map);
+    marker3.bindPopup("<b>Device A8PML</b><br>Sensor temperature-3").openPopup();
+    let marker4 = L.marker([37.97703958760738, 23.781721680297096]).addTo(map);
+    marker4.bindPopup("<b>Device XGL4A</b><br>Sensor temperature-4").openPopup();
+    let marker5 = L.marker([37.981248088864056, 23.78021959436339]).addTo(map);
+    marker5.bindPopup("<b>Device QWEV2</b><br>Sensor power-1").openPopup();
+    let marker6 = L.marker([37.97709033009583, 23.779361336617722]).addTo(map);
+    marker6.bindPopup("<b>Device B2G3H</b><br>Sensor power-2").openPopup();
+
+
+    // marker6.bindPopup("<b>Device A8PML</b><br>Sensor power-2").openPopup();
+    // let marker7 = L.marker([37.985248088864056, 23.78021959436339]).addTo(map);
+    // marker7.bindPopup("<b>Device A8PML</b><br>Sensor power-3").openPopup();
+    // let marker8 = L.marker([37.987248088864056, 23.78021959436339]).addTo(map);
+    // marker8.bindPopup("<b>Device A8PML</b><br>Sensor pressure-1").openPopup();
+    // let marker9 = L.marker([37.989248088864056, 23.78021959436339]).addTo(map);
+    // marker9.bindPopup("<b>Device A8PML</b><br>Sensor pressure-2").openPopup();
+    // let marker10 = L.marker([37.991248088864056, 23.78021959436339]).addTo(map);
+    // marker10.bindPopup("<b>Device A8PML</b><br>Sensor pressure-3").openPopup();
+    // let marker11 = L.marker([37.993248088864056, 23.78021959436339]).addTo(map);
+
+    // Add markers for each device
+    deviceLocations.forEach(function (location) {
+        L.marker([location.lat, location.lng], { icon: deviceIcon }).addTo(map);
+    });
+</script>
+
+</body>
+</html>
