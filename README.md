@@ -83,9 +83,9 @@ Project: Distributed Processing System for Industrial Protocols
 
 ### Topic organization
 
-Topic per measurement type. This is just an example. The exact number of topics and partitions can be configured in `application.yml` file.
-Each sensor has a unique id. The id is used as a key for the message. The key is used to partition the messages. 
-This way, all messages from the same sensor will be stored in the same partition. This is useful for aggregations.
+Topic per measurement type. This is just an example. The exact number of topics and partitions can be configured in `application.yml` file.  
+Each sensor has a unique id. The id is used as a key for the message. The key is used to partition the messages.   
+This way, all messages from the same sensor will be stored in the same partition. This is useful for aggregations.  
 ```bash
   temperature(0)   |   power(1)   |   pressure(2)
   -----------------|--------------|---------------
