@@ -48,6 +48,10 @@ This project serves as a comprehensive example of an end-to-end solution for ind
 - Real-time data visualization using Grafana, InfluxDB and custom javascript with websockets protocol
 - Use docker-compose to run the app
 
+## Extra info
+This is a demo app for a thesis. It is not meant to be used in production as is, needs further development and testing.  
+All the components are running in docker containers. Data are simulated using python scripts. Currently, the app is configured to run in a single node, but it can be easily configured to run in a cluster.
+For communication between the app and the sensors, the Modbus protocol is used. The PLC4X library is used for communication, so we can easily add more protocols in the future or replace Modbus protocol with another one.
 
 ## Pre-requisites
 
