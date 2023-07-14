@@ -80,6 +80,28 @@ Thesis by Skourtsidis Giorgos, National Technical University of Athens, School o
 Associate Professor: Verena Kantere
 Supervisor: Paraskevas Kerasiotis  
 Project: Distributed Processing System for Industrial Protocols  
+### App
+![image](https://github.com/SkourtsidisGiorgos/IIoT-Data-Processing-System/assets/60469956/6cce1c5d-c2f3-46cb-894f-f1e0d46636de)
+![image](https://github.com/SkourtsidisGiorgos/IIoT-Data-Processing-System/assets/60469956/2099db4d-18af-4dfc-b6ca-400ba996c936)
+![image](https://github.com/SkourtsidisGiorgos/IIoT-Data-Processing-System/assets/60469956/cc13ca7a-9482-471d-9a7d-03fd1bc6644e)
+![image](https://github.com/SkourtsidisGiorgos/IIoT-Data-Processing-System/assets/60469956/f919ffbe-af76-41de-9f6c-d5621c5a2625)
+![Screenshot from 2023-05-23 01-55-53](https://github.com/SkourtsidisGiorgos/IIoT-Data-Processing-System/assets/60469956/8a8da831-ddcc-4a7f-a137-ff609b780c30)
+
+
+### Monitoring
+![image](https://github.com/SkourtsidisGiorgos/IIoT-Data-Processing-System/assets/60469956/54d22789-f9f3-4c74-9a09-52a63f6aad37)
+![image](https://github.com/SkourtsidisGiorgos/IIoT-Data-Processing-System/assets/60469956/813c5b1d-a3f2-46e0-97d2-40e19a97ac05)
+![image](https://github.com/SkourtsidisGiorgos/IIoT-Data-Processing-System/assets/60469956/eb3de3bd-c49a-4079-9aca-b0de317d45b0)
+![image](https://github.com/SkourtsidisGiorgos/IIoT-Data-Processing-System/assets/60469956/44ddb06d-a777-4257-b5ad-20c195985351)
+![image](https://github.com/SkourtsidisGiorgos/IIoT-Data-Processing-System/assets/60469956/577a0f08-b33e-487e-afd3-2aa0589d067f)
+![image](https://github.com/SkourtsidisGiorgos/IIoT-Data-Processing-System/assets/60469956/d7cdf0ac-da7a-48d2-8d87-061fd210dac7)
+![image](https://github.com/SkourtsidisGiorgos/IIoT-Data-Processing-System/assets/60469956/a221beeb-8939-4732-9a00-67523ddfc674)
+![image](https://github.com/SkourtsidisGiorgos/IIoT-Data-Processing-System/assets/60469956/39521d6f-3b14-49a1-9097-c30ea01c3ba8)
+
+### Alerting
+![Screenshot from 2023-05-24 02-55-42](https://github.com/SkourtsidisGiorgos/IIoT-Data-Processing-System/assets/60469956/9f1c96d4-86cd-48c8-8e8e-ac198ac5b510)
+![image](https://github.com/SkourtsidisGiorgos/IIoT-Data-Processing-System/assets/60469956/492dbec2-8437-4ef7-bc6d-0448946c1b33)
+![image](https://github.com/SkourtsidisGiorgos/IIoT-Data-Processing-System/blob/main/doc/screenshots/kafka_noti.png?raw=true)
 
 ### Topic organization
 
