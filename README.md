@@ -17,6 +17,10 @@ Project Components:
 
 This project serves as a comprehensive example of an end-to-end solution for industrial data processing systems. It provides a solid foundation for further development and improvements in the realm of real-time data processing and management systems in industrial settings.
 
+## Videos
+- [Mock thesis presentation (Greek)](https://www.youtube.com/watch?v=ENjL1Sam0As)
+- [Quick app/code walkthrough (Greek)](https://www.youtube.com/watch?v=Ah-X_SbiWYM)
+
 ## Features
 
 - Multiple producers/consumers using Spring's Beans
