@@ -1,0 +1,7 @@
+DNP3 (Distributed Network Protocol) is a communications protocol used in the utility industry for Supervisory Control and Data Acquisition (SCADA) systems. It is a widely used protocol for communicating between control systems and field devices such as sensors, switches, and actuators. DNP3 is an open standard, meaning that it is freely available for anyone to use. It is designed to be reliable, secure, and efficient, and is commonly used in the electricity, oil and gas, and water and wastewater industries.
+
+DNP3 uses a client-server architecture, in which devices on the network are either clients or servers. Clients are devices that initiate communication with servers, while servers are devices that provide information or services to clients. Each device on the network has a unique identifier, and communication between devices is based on this identifier.
+
+DNP3 uses a peer-to-peer architecture, in which devices can communicate directly with each other without the need for a central controller or computer. This allows for efficient communication and improved reliability, as devices can continue to operate even if the central controller fails.
+
+DNP3 is known for its reliability, security, and efficiency. It is widely used in the electricity, oil and gas, and water and wastewater industries, and is an open standard that is freely available for anyone to use.
