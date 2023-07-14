@@ -89,6 +89,7 @@ Associate Professor: Verena Kantere
 Supervisor: Paraskevas Kerasiotis  
 Project: Distributed Processing System for Industrial Protocols  
 ### App
+TODO: fix screenshots
 ![image](https://github.com/SkourtsidisGiorgos/IIoT-Data-Processing-System/assets/60469956/6cce1c5d-c2f3-46cb-894f-f1e0d46636de)
 ![image](https://github.com/SkourtsidisGiorgos/IIoT-Data-Processing-System/assets/60469956/2099db4d-18af-4dfc-b6ca-400ba996c936)
 ![image](https://github.com/SkourtsidisGiorgos/IIoT-Data-Processing-System/assets/60469956/cc13ca7a-9482-471d-9a7d-03fd1bc6644e)
