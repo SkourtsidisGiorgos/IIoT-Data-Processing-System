@@ -9,7 +9,6 @@ public class AppConstants {
       public static final String TEMPERATURE_DEVICE_PREFIX = "temperature-";
       public static final String PRESSURE_DEVICE_PREFIX = "pressure-";
         public static final String POWER_DEVICE_PREFIX = "power-";
-      public static final String KAFKA_BROKERS = "localhost:9092";
       public static final Integer MESSAGE_COUNT = 1000;
       public static final String CLIENT_ID = "client1";
 

@@ -63,9 +63,9 @@ spring:
     cache: false
     mode: HTML
     encoding: UTF-8
-    prefix: file:src/main/resources/templates/
+#    prefix: file:src/main/resources/templates/
    resources: # Static resources
-    static-locations: file:src/main/resources/static/
+#    static-locations: file:src/main/resources/static/
     cache:
       period: 0
 
@@ -273,6 +273,14 @@ spring:
          on-profile: docker
 management.metrics.export.graphite.host: graphite
 spring.kafka.bootstrap.servers: broker:9092
-spring.kafka.properties.bootstrap.servers: broker:9092
+spring.kafka.properties.bootstrap.servers: broker:29092
 application.influxdb.host: influxdb2
 application.schema.registry.host: schema-registry
+
+spring.datasource:
+    url: jdbc:postgresql://postgres:5432/postgres
+
+spring.redis:
+  host: redis
+
+application.modbusPal.host: modbus-server

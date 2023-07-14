@@ -1,4 +1,5 @@
-# if you want to use caching for the builds, use COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose up --build
+# if you want to use caching for the builds, use `COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose up --build`
+# There are several services commented-out in this docker-compose file. You can uncomment them if you want to use them. For kafka-related services you will need to add them to the `depends_on` section of the services that need them.
 
 ---
 version: '2'
@@ -13,22 +14,26 @@ volumes:
 
 services:
 
-#  streaming_iot:
-#      build:
-#        context: .
-#        #args:
-#        #  A: B
-#      image: ntua/streaming_iot
-#      container_name: streaming_iot
-#      # depends_on:
-#      #   -
-#      expose:
-#        - 10000
-#      ports:
-#        - 10000:10000
-#      volumes:
-#        - ./config:/config
-#        - ./logs:/logs
+  streaming_iot:
+      build:
+        context: .
+        #args:
+        #  A: B
+      image: ntua/streaming_iot
+      container_name: streaming_iot
+      # depends_on:
+      #   -
+      expose:
+        - 10000
+      ports:
+        - 10000:10000
+      volumes:
+        - ./config:/config
+        - ./logs:/logs
+      depends_on:
+        - influxdb
+        - redis
+        - postgres
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.3.0

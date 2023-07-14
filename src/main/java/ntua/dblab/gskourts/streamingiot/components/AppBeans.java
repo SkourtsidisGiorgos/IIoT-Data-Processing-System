@@ -39,6 +39,7 @@ public class AppBeans {
    @ConditionalOnProperty(name="web-server-only", havingValue="false")
    public KafkaAdmin kafkaAdmin() {
       Map<String, Object> configs = new HashMap<>();
+      log.info("Kafka bootstrap servers: " + appConf.getBootstrapServers());
       configs.put(org.apache.kafka.clients.admin.AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG,
             appConf.getBootstrapServers());
       return new KafkaAdmin(configs);
