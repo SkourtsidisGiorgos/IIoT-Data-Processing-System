@@ -57,18 +57,29 @@ or
 - `COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker compose up -d` (uses caching for the builds)
 
 The first time you run the app, it will take some time to download the images and build the containers.
-After that, the app will start and you can visit the following urls:
-- Swagger UI: `http://localhost:10000/streaming-iot/swagger-ui/index.html`
-- Spring Boot Admin: `http://localhost:10001`
-- Grafana: `http://localhost:3000` (username: admin, password: admin)
-- Prometheus: `http://localhost:9090`
-- cAdvisor: `http://localhost:8080`
 
-## Swagger-ui
-- visit: `http://localhost:10000/swagger-ui/` (when using springfox-swagger2)
-- `http://localhost:10000/streaming-iot/swagger-ui/index.html` (when using springdoc-openapi-ui)
+To rebuild the containers, use `docker-compose build --no-cache streaming_iot` or `docker-compose up -d --build`  
+To stop the app, use `docker-compose down` or `docker-compose down -v` to remove volumes as well (e.g. kafka data or influxdb data)
 
-## Topic organization
+## How to use 
+
+After that, the app will start and you can visit the following urls (all in localhost):
+- [Swagger UI](http://localhost:10000/streaming-iot/swagger-ui/index.html). Use the endpoints to send data to the app.
+- [App UI](http://localhost:10000/streaming-iot/overview). Navigate to multiple pages to see the functionality. Use the side menu to navigate.
+- [Grafana](http://localhost:3000) (username: admin, password: admin). Got to `Dashboards -> Manage` to see the available dashboards.
+- [Prometheus](http://localhost:9090). Explore the available metrics.
+- [Kafka Control Center](http://localhost:9021)
+- [Spring Boot Admin](http://localhost:10000)
+- [InfluxDB](http://localhost:8086). Use `admin` as username and `mySecurePassword` as password. Load the `./doc/influx_db_dashboard_export/ntua_streaming_iot_measurements.json` file to see real time ingested data in a dashboard.
+
+## Info
+
+Thesis by Skourtsidis Giorgos, National Technical University of Athens, School of Electrical and Computer Engineering (ECE-NTUA), 2022     
+Associate Professor: Verena Kantere
+Supervisor: Paraskevas Kerasiotis  
+Project: Distributed Processing System for Industrial Protocols  
+
+### Topic organization
 
 Topic per measurement type. This is just an example. The exact number of topics and partitions can be configured in `application.yml` file.
 Each sensor has a unique id. The id is used as a key for the message. The key is used to partition the messages. 
@@ -87,10 +98,3 @@ This way, all messages from the same sensor will be stored in the same partition
 ### InfluxDB connector
 
 `curl -X POST -H "Content-Type: application/json" --data @connect-influxdb-sink-temperature.json http://localhost:8083/connectors`
-
-## Info
-
-Thesis by Skourtsidis Giorgos, National Technical University of Athens, School of Electrical and Computer Engineering (ECE-NTUA), 2022   
-Associate Professor: Verena Kantere
-Supervisor: Paraskevas Kerasiotis
-Project: Distributed Processing System for Industrial Protocols
