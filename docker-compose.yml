@@ -238,6 +238,8 @@ services:
       - "5021:5021"
     hostname: modbus-client
     container_name: modbus-client
+    depends_on:
+      - modbus-server
 
   grafana:
       image: grafana/grafana
