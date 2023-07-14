@@ -1,3 +1,5 @@
+# Distributed Processing System for Industrial Protocols
+
 Description:
 
 This repository contains the source code of the diploma thesis titled 'Distributed Processing System for Industrial Protocols' developed at the National Technical University of Athens (NTUA). The project implements a robust, scalable, and real-time data processing system designed to handle and process multi-source and heterogeneous data originating from various industrial protocols.
@@ -5,13 +7,13 @@ This repository contains the source code of the diploma thesis titled 'Distribut
 The system provides features like fault tolerance, real-time data processing, scalability, performance monitoring, and a timely alert system for potential issues. Additionally, it can automatically trigger actions based on incoming data to prevent potential industrial accidents.
 Project Components:
 
-    Data Simulation: Temperature, pressure, and power sensors' data is simulated using Python.
-    Data Transfer: The Modbus protocol and the PLC4X library are utilized for transferring the sensor data to the Kafka system.
-    Data Processing: Kafka Streams are employed for real-time data processing.
-    Data Storage: Processed data is stored in an InfluxDB database, while the most recent data values are stored in-memory using the Redis system.
-    Application: The entire application is implemented in Java using the Spring Boot framework.
-    Data Visualization: Data visualization is achieved via Grafana.
-    Performance Monitoring: Performance metrics are monitored using Prometheus, cAdvisor, and Node Exporter.
+- Data Simulation: Temperature, pressure, and power sensors' data is simulated using Python.
+- Data Transfer: The Modbus protocol and the PLC4X library are utilized for transferring the sensor data to the Kafka system.
+- Data Processing: Kafka Streams are employed for real-time data processing.
+- Data Storage: Processed data is stored in an InfluxDB database, while the most recent data values are stored in-memory using the Redis system.
+- Application: The entire application is implemented in Java using the Spring Boot framework.
+- Data Visualization: Data visualization is achieved via Grafana.
+- Performance Monitoring: Performance metrics are monitored using Prometheus, cAdvisor, and Node Exporter.
 
 This project serves as a comprehensive example of an end-to-end solution for industrial data processing systems. It provides a solid foundation for further development and improvements in the realm of real-time data processing and management systems in industrial settings.
 
@@ -63,7 +65,7 @@ To stop the app, use `docker-compose down` or `docker-compose down -v` to remove
 
 ## How to use 
 
-After that, the app will start and you can visit the following urls (all in localhost):
+After that, the app will start and you can visit the following urls (all are links in localhost):
 - [Swagger UI](http://localhost:10000/streaming-iot/swagger-ui/index.html). Use the endpoints to send data to the app.
 - [App UI](http://localhost:10000/streaming-iot/overview). Navigate to multiple pages to see the functionality. Use the side menu to navigate.
 - [Grafana](http://localhost:3000) (username: admin, password: admin). Got to `Dashboards -> Manage` to see the available dashboards.
