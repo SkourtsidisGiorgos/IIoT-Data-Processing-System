@@ -4,7 +4,7 @@ Description:
 
 This repository contains the source code of the diploma thesis titled 'Distributed Processing System for Industrial Protocols' developed at the National Technical University of Athens (NTUA). The project implements a robust, scalable, and real-time data processing system designed to handle and process multi-source and heterogeneous data originating from various industrial protocols.
 
-The system provides features like fault tolerance, real-time data processing, scalability, performance monitoring, and a timely alert system for potential issues. Additionally, it can automatically trigger actions based on incoming data to prevent potential industrial accidents.
+The system provides features like fault tolerance, real-time data processing, scalability, performance monitoring, and a timely alert system for potential issues. Additionally, it can automatically trigger actions based on incoming data to prevent potential industrial accidents.  
 Project Components:
 
 - Data Simulation: Temperature, pressure, and power sensors' data is simulated using Python.
