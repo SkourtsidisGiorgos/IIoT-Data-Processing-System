@@ -1,6 +1,11 @@
 # Distributed Processing System for Industrial Protocols
 
-Description:
+**Info**  
+Thesis by Skourtsidis Giorgos, National Technical University of Athens, School of Electrical and Computer Engineering (ECE-NTUA), 2022     
+Associate Professor: Verena Kantere  
+Supervisor: Paraskevas Kerasiotis    
+
+**Description**:
 
 This repository contains the source code of the diploma thesis titled 'Distributed Processing System for Industrial Protocols' developed at the National Technical University of Athens (NTUA). The project implements a robust, scalable, and real-time data processing system designed to handle and process multi-source and heterogeneous data originating from various industrial protocols.
 
@@ -24,7 +29,7 @@ This project serves as a comprehensive example of an end-to-end solution for ind
 
 ## Features
 
-- Multiple producers/consumers using Spring's Beans
+- Multiple producers/consumers
 - Multiple measurement types (temperature, power, pressure)
 - Spring profiles for environment shift (dev,test,prod)
 - Exports metrics to JMX, Prometheus, Graphite
@@ -83,12 +88,7 @@ After that, the app will start and you can visit the following urls (all are lin
 - [Spring Boot Admin](http://localhost:10000)
 - [InfluxDB](http://localhost:8086). Use `admin` as username and `mySecurePassword` as password. Load the `./doc/influx_db_dashboard_export/ntua_streaming_iot_measurements.json` file to see real time ingested data in a dashboard.
 
-## Info
 
-Thesis by Skourtsidis Giorgos, National Technical University of Athens, School of Electrical and Computer Engineering (ECE-NTUA), 2022     
-Associate Professor: Verena Kantere
-Supervisor: Paraskevas Kerasiotis  
-Project: Distributed Processing System for Industrial Protocols  
 ### App
 TODO: fix screenshots
 ![image](https://github.com/SkourtsidisGiorgos/IIoT-Data-Processing-System/assets/60469956/6cce1c5d-c2f3-46cb-894f-f1e0d46636de)
