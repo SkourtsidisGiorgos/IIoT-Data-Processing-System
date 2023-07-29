@@ -21,6 +21,7 @@ The system provides features like fault tolerance, real-time data processing, sc
 - Data Visualization: Data visualization is achieved via Grafana.
 - Performance Monitoring: Performance metrics are monitored using Prometheus, cAdvisor, and Node Exporter.
 
+![image](https://github.com/SkourtsidisGiorgos/IIoT-Data-Processing-System/blob/main/doc/screenshots/app-components.png)
 This project serves as a comprehensive example of an end-to-end solution for industrial data processing systems. It provides a solid foundation for further development and improvements in the realm of real-time data processing and management systems in industrial settings.
 
 ## Videos
