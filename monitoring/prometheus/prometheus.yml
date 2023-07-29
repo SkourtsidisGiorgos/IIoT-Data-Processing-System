@@ -28,5 +28,5 @@ global:
     remote_write:
     - url: https://prometheus-us-central1.grafana.net/api/prom/push
       basic_auth:
-        username: 704101
-        password: eyJrIjoiZDE5YTY3OWM3ZWNhYzRjZGU3MjdkZjE2ZDQ2NDM5NzU3NzNkYmE3ZCIsIm4iOiJzcGJvb3QtcHJvbSIsImlkIjo3NjU3MjN9
+        username: 
+        password: 
