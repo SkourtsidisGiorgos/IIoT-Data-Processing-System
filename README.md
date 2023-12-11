@@ -5,8 +5,8 @@ Thesis by Skourtsidis Giorgos, National Technical University of Athens, School o
 Associate Professor: Verena Kantere  
 Supervisor: Paraskevas Kerasiotis    
 
-- [PDF (Greek)](http://artemis.cslab.ece.ntua.gr:8080/jspui/bitstream/123456789/18714/1/%ce%a3%ce%9a%ce%9f%ce%a5%ce%a1%ce%a4%ce%a3%ce%99%ce%94%ce%97%ce%a3-%ce%94%ce%99%ce%a0%ce%9b%ce%a9%ce%9c%ce%91%ce%a4%ce%99%ce%9a%ce%97-03114307.pdf) 📄
-- [PPTX (Greek)](https://github.com/SkourtsidisGiorgos/IIoT-Data-Processing-System/blob/main/doc/thesis_presentation_greek.pptx) 📊
+- [PDF (Greek)](http://artemis.cslab.ece.ntua.gr:8080/jspui/bitstream/123456789/18714/1/%ce%a3%ce%9a%ce%9f%ce%a5%ce%a1%ce%a4%ce%a3%ce%99%ce%94%ce%97%ce%a3-%ce%94%ce%99%ce%a0%ce%9b%ce%a9%ce%9c%ce%91%ce%a4%ce%99%ce%9a%ce%97-03114307.pdf) 
+- [PPTX (Greek)](https://github.com/SkourtsidisGiorgos/IIoT-Data-Processing-System/blob/main/doc/thesis_presentation_greek.pptx) 
 
 **Description** 📝
 
