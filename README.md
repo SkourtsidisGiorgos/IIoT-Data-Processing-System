@@ -38,7 +38,7 @@ This project serves as a comprehensive example of an end-to-end solution for ind
 - Spring profiles for environment shift (dev,test,prod)
 - Exports metrics to JMX, Prometheus, Graphite
 - Enabled Log compression and retention by default
-- Status endpoints for app: `/app/info/status`, `/app/info/healch`, `/app/info/buildinfo` etc
+- Status endpoints for app: `/app/info/status`, `/app/info/health`, `/app/info/buildinfo` etc
 - gc logs are enabled and written to file
 - springdoc-openapi-ui for swagger-ui
 - spring-boot-admin for monitoring and managing the app
