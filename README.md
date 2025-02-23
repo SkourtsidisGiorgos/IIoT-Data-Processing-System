@@ -2,7 +2,7 @@
 
 **Info**  📚  
 Thesis by Skourtsidis Giorgos, National Technical University of Athens, School of Electrical and Computer Engineering (ECE-NTUA), 2022     
-Associate Professor: Verena Kantere  
+Associate Professor: [Verena Kantere](https://www.verenakantere.com/)  
 Supervisor: Paraskevas Kerasiotis    
 
 - [PDF (Greek)](http://artemis.cslab.ece.ntua.gr:8080/jspui/bitstream/123456789/18714/1/%ce%a3%ce%9a%ce%9f%ce%a5%ce%a1%ce%a4%ce%a3%ce%99%ce%94%ce%97%ce%a3-%ce%94%ce%99%ce%a0%ce%9b%ce%a9%ce%9c%ce%91%ce%a4%ce%99%ce%9a%ce%97-03114307.pdf) 
